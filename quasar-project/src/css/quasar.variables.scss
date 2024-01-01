@@ -1,0 +1,58 @@
+// Quasar SCSS (& Sass) Variables
+// --------------------------------------------------
+// To customize the look and feel of this app, you can override
+// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+
+// Check document$for full list of Quasar variables
+
+// Your own variables (that are declared here) and Quasar's own
+// ones will be available out of the box in your .vue/.scss/.sass files
+
+// It's highly recommended to change the defaults
+// to match your app's branding.
+// Tip: Use the "Theme Builder" on Quasar's document$website.
+
+$primary: #1976d2;
+$secondary: #26a69a;
+$accent: #9c27b0;
+
+$white: #ffffff;
+
+$light: #f2f2f2;
+$dark: #1d1d1d;
+$dark-page: #121212;
+
+$positive: #21ba45;
+$negative: #c10015;
+$info: #31ccec;
+$warning: #f2c037;
+
+$step-950: #141414;
+$step-900: #1a1a1a;
+$step-850: #262626;
+$step-800: #333333;
+$step-750: #404040;
+$step-700: #4d4d4d;
+$step-650: #595959;
+$step-600: #666666;
+$step-550: #737373;
+$step-500: #808080;
+$step-450: #8c8c8c;
+$step-400: #999999;
+$step-350: #a6a6a6;
+$step-300: #b3b3b3;
+$step-250: #bfbfbf;
+$step-200: #cccccc;
+$step-150: #d9d9d9;
+$step-100: #e6e6e6;
+$step-50: #f2f2f2;
+
+$background: #ecf2fd;
+$text: #000000;
+$card: $white !default;
+
+.body--dark {
+  background-color: #0d0d0d;
+  color: #efefef;
+  $card: #262626 $step-850;
+}

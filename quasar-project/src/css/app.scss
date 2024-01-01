@@ -1,0 +1,114 @@
+// app global css in SCSS form
+html,
+body {
+  overscroll-behavior: none;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 2rem;
+}
+
+h2 {
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  line-height: 1.2rem;
+}
+
+h4 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1rem;
+}
+
+.text-light {
+  color: $light;
+}
+
+.bg-light {
+  color: $light;
+}
+
+p {
+  margin: 0;
+}
+/*
+.q-btn {
+  margin: 1rem 0;
+  border-radius: 5px;
+  background-color: $primary;
+  padding: 1.2rem;
+  width: 100%;
+}
+*/
+.q-date__content .q-btn {
+  background-color: transparent;
+}
+
+.q-uploader,
+.q-date {
+  width: 100%;
+  margin-bottom: 1rem;
+
+  .q-btn {
+    padding: 0.285em;
+    margin: 0;
+  }
+}
+
+.q-panel {
+  overflow: visible;
+}
+
+.q-uploader .q-btn {
+  width: initial;
+}
+
+.default {
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+}
+
+// DARK THEME
+.body--dark #q-app {
+  .q-page-container {
+    background-color: $step-950;
+  }
+
+  #header {
+    background-color: $step-950;
+    color: $background;
+  }
+
+  .q-list[data-v-9e2f1530] {
+    background-color: $step-850;
+  }
+
+  nav {
+    filter: drop-shadow(0px 0px 2px $step-750);
+
+    a:not(nav .action-btn a) {
+      background-color: $step-800;
+      color: $background;
+    }
+  }
+
+  section,
+  form {
+    background-color: $step-800;
+    color: $background;
+  }
+
+  .card {
+    background-color: $step-850;
+    filter: drop-shadow(0px 0px 3px $step-750);
+    color: $background;
+  }
+}
