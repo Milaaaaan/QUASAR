@@ -47,6 +47,11 @@ p {
   width: 100%;
 }
 */
+
+.q-stepper--horizontal .q-stepper__step-inner {
+  padding: 1rem;
+}
+
 .q-date__content .q-btn {
   background-color: transparent;
 }

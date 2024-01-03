@@ -1,4 +1,4 @@
-import validator from '../../src/composables/validator'
+import validator from 'src/composables/validator'
 
 describe('Validation Utils', () => {
   describe('name', () => {

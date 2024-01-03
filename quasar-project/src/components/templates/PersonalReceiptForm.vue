@@ -7,8 +7,6 @@ import { useGroupStore } from 'src/stores/groups'
 import { useReceiptStore } from 'src/stores/receipts'
 import { useUserStore } from 'src/stores/user'
 import { computed, ref, watch } from 'vue'
-import CleanInput from '../atoms/CleanInput.vue'
-import ItemList from '../molecules/ItemList.vue'
 
 const name = ref()
 const total = ref(0)
@@ -40,21 +38,19 @@ const done1 = ref(false)
 const done2 = ref(false)
 const done3 = ref(false)
 
-const temp = ref(0)
 const types = ['personal', 'friend', 'group']
-const pinFormatter = (value) => `€${value}`
+const pinFormatter = (value) => `€${value.toFixed(2)}`
+
+const columns = [
+  { name: 'name', align: 'left', label: 'Name', field: 'name' },
+  { name: 'amount', align: 'center', label: 'Amount', field: 'amount' },
+  { name: 'price', label: 'Price', field: 'price' },
+  { name: 'total', label: 'Total', field: 'total' },
+]
 
 const artikles = ref([
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
-  { title: 'example', amount: 3, price: 3.49 },
+  { name: 'example', amount: 3, price: 3.49 },
+  { name: 'example', amount: 3, price: 3.49 },
 ])
 
 const nameError = computed(() => validator.name(submitted.value, name.value, 'Name', 5))
@@ -71,9 +67,11 @@ const onGroupChange = (e) => {
   group.value = e.detail.value
 }
 
-const totalError = computed(() => {
-  if (step.value >= 3) return validator.number(submitted.value, total.value, 'Total', 0.01, 1000000)
-  else return ''
+const totalError = computed(() => validator.number(submitted.value, total.value, 'Total', 0.01, 1000000))
+
+watch([withArtikles, artikles], () => {
+  if (withArtikles.value && artikles.value)
+    total.value = artikles.value.reduce((total, object) => total + object.price * object.amount, 0)
 })
 
 const submit = async () => {
@@ -115,10 +113,6 @@ const submit = async () => {
     }
   }
 }
-
-watch(artikles, () => {
-  // total.value = artikles.reduce((total, object) => total + object.price, 0)
-})
 
 const handleForm = async () => {
   submitted.value = true
@@ -268,7 +262,6 @@ const handleForm = async () => {
               :error-message="nameError"
               :error="submitted && nameError != ''"
             />
-
             <q-select filled v-model="category" :options="useReceipt.category" label="Category">
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">
@@ -285,17 +278,76 @@ const handleForm = async () => {
 
             <q-select filled v-model="type" :options="types" label="Type" />
 
+            <div class="buttons">
+              <q-chip square color="primary" text-color="white" icon="event">
+                {{ when }}
+                <q-popup-proxy @before-show="updateProxy">
+                  <q-date v-model="when" mask="YYYY-MM-DD HH:mm">
+                    <div class="row items-center justify-end q-gutter-sm">
+                      <q-btn label="Cancel" color="primary" flat v-close-popup />
+                      <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-chip>
+
+              <q-chip square color="primary" text-color="white" icon="schedule">
+                <q-popup-proxy @before-show="updateProxy">
+                  <q-time v-model="when" mask="YYYY-MM-DD HH:mm">
+                    <div class="row items-center justify-end q-gutter-sm">
+                      <q-btn label="Cancel" color="primary" flat v-close-popup />
+                      <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                    </div>
+                  </q-time>
+                </q-popup-proxy>
+                Time
+              </q-chip>
+            </div>
+
+            <q-table v-if="withArtikles" :rows="artikles" :columns="columns" title="Items" row-key="name">
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td key="name" :props="props">
+                    {{ props.row.name }}
+                    <q-popup-edit v-model="props.row.name" title="Edit Name" auto-save v-slot="scope">
+                      <q-input v-model="scope.value" dense autofocus @keyup.enter="scope.set" />
+                    </q-popup-edit>
+                  </q-td>
+                  <q-td key="amount" :props="props">
+                    {{ props.row.amount }}
+                    <q-popup-edit title="Edit amount" v-model.number="props.row.amount" auto-save v-slot="scope">
+                      <q-input type="number" v-model.number="scope.value" dense autofocus @keyup.enter="scope.set" />
+                    </q-popup-edit>
+                  </q-td>
+                  <q-td key="price" :props="props">
+                    {{ props.row.price }}
+                    <q-popup-edit title="Edit price" v-model="props.row.price" auto-save v-slot="scope">
+                      <q-input type="number" v-model.number="scope.value" dense autofocus @keyup.enter="scope.set" />
+                    </q-popup-edit>
+                  </q-td>
+                  <q-td key="total" :props="props">
+                    {{ props.row.amount * props.row.price }}
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+
+            <q-input
+              v-model="total"
+              label="Total cost"
+              :disable="withArtikles"
+              filled
+              square
+              type="number"
+              placeholder="The amount of total money spent"
+              :error-message="totalError"
+              :error="submitted && totalError != ''"
+            />
+
+            <q-checkbox v-model="withArtikles" label="With items" />
+
             <q-stepper-navigation>
-              <q-btn
-                @click="
-                  () => {
-                    done1 = true
-                    step = 2
-                  }
-                "
-                color="primary"
-                label="Continue"
-              />
+              <q-btn @click="handleForm" color="primary" label="Continue" />
             </q-stepper-navigation>
           </q-step>
 
@@ -316,93 +368,14 @@ const handleForm = async () => {
               </template>
             </q-input>
 
-            {{ when }}
-
-            <q-btn icon="event" color="primary">
-              <q-popup-proxy @before-show="updateProxy">
-                <q-date v-model="when" mask="YYYY-MM-DD HH:mm">
-                  <div class="row items-center justify-end q-gutter-sm">
-                    <q-btn label="Cancel" color="primary" flat v-close-popup />
-                    <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
-                  </div>
-                </q-date>
-              </q-popup-proxy>
-            </q-btn>
-
-            <q-btn icon="schedule" color="primary">
-              <q-popup-proxy @before-show="updateProxy">
-                <q-time v-model="when" mask="YYYY-MM-DD HH:mm">
-                  <div class="row items-center justify-end q-gutter-sm">
-                    <q-btn label="Cancel" color="primary" flat v-close-popup />
-                    <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
-                  </div>
-                </q-time>
-              </q-popup-proxy>
-            </q-btn>
-
             <q-stepper-navigation>
-              <q-btn @click="step--" color="negative" label="Back" />
               <q-btn @click="handleForm" color="primary" label="Continue" />
+              <q-btn @click="step--" color="negative" label="Back" />
             </q-stepper-navigation>
           </q-step>
 
           <!-- STEP 3-->
-          <q-step :name="3" title="3" icon="add_comment" :done="done3">
-            <q-markup-table flat square v-if="withArtikles">
-              <thead class="bg-primary">
-                <tr>
-                  <th class="text-left">Item</th>
-                  <th class="text-right">price</th>
-                  <th class="text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
-                <tr>
-                  <td class="text-left">Frozen Yogurt</td>
-                  <td class="text-right">159</td>
-                  <td class="text-right">6</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Ice cream sandwich</td>
-                  <td class="text-right">237</td>
-                  <td class="text-right">9</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Eclair</td>
-                  <td class="text-right">262</td>
-                  <td class="text-right">16</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Cupcake</td>
-                  <td class="text-right">305</td>
-                  <td class="text-right">3.7</td>
-                </tr>
-                <tr>
-                  <td class="text-left">Gingerbread</td>
-                  <td class="text-right">356</td>
-                  <td class="text-right">16</td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-            <q-input
-              v-model="total"
-              label="Total cost"
-              :disable="withArtikles"
-              filled
-              square
-              type="number"
-              placeholder="The amount of total money spent"
-              :error-message="nameError"
-              :error="submitted && nameError != ''"
-            />
-
-            <q-checkbox v-model="withArtikles" label="With items" />
-
-            <q-stepper-navigation>
-              <q-btn @click="step = 2" color="negative" label="Back" />
-              <q-btn color="primary" @click="handleForm" label="Finish" />
-            </q-stepper-navigation>
-          </q-step>
+          <q-step :name="3" title="3" icon="add_comment" :done="done3"> </q-step>
         </q-stepper>
       </section>
     </IonContent>
@@ -410,6 +383,9 @@ const handleForm = async () => {
 </template>
 
 <style scoped lang="scss">
+.options {
+  padding: 0.5rem;
+}
 .q-stepper {
   min-height: 75vh;
   width: 100%;
@@ -436,7 +412,7 @@ form {
 }
 
 section {
-  padding: 1rem 0;
+  padding: 0;
   height: -webkit-fill-available;
   display: flex;
   align-items: center;
@@ -452,5 +428,6 @@ section {
   gap: 1rem;
   justify-content: space-between;
   align-items: center;
+  flex-direction: row-reverse;
 }
 </style>

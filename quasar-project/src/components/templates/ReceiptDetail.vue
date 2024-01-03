@@ -9,6 +9,12 @@ import { useRoute } from 'vue-router'
 const useReceipt = useReceiptStore()
 const useUser = useUserStore()
 const route = useRoute()
+const columns = [
+  { name: 'name', align: 'left', label: 'Name', field: 'name' },
+  { name: 'amount', align: 'center', label: 'Amount', field: 'amount' },
+  { name: 'price', label: 'Price', field: 'price' },
+  { name: 'total', label: 'Total', field: 'total' },
+]
 
 const receipt = computed(() => {
   if (route.params.index) return useReceipt.receipts[route.params.index]
@@ -30,46 +36,34 @@ const creator = computed(() => {
 
 <template>
   <section v-if="receipt" :class="'receipt ' + useReceipt.category[receipt.category - 1].type">
-    <q-icon color="light" size="xx-large" :name="useReceipt.category[receipt.category - 1].icon" />
-    <h2>{{ receipt.title }}</h2>
-    <h3>{{ receipt.type }}</h3>
-    <p>{{ receipt.description }}</p>
-    <p>{{ receipt.location }}</p>
-    <p v-if="creator">
-      Created by
-      <b>{{ creator.name }}</b>
-    </p>
+    <div class="part">
+      <q-icon color="light" size="xx-large" :name="useReceipt.category[receipt.category - 1].icon" />
+      <h2>{{ receipt.title }}</h2>
+      <h3>{{ receipt.type }}</h3>
+      <p>{{ receipt.description }}</p>
+      <p>{{ receipt.location }}</p>
+      <p v-if="creator">
+        Created by
+        <b>{{ creator.name }}</b>
+      </p>
+    </div>
 
     <span v-if="receipt.items" class="splicer"></span>
 
-    <div v-if="receipt.items" class="tabs">
-      <h3>Receipt items</h3>
-      <div>
-        <div v-for="(item, index) in receipt.items" :key="index" class="items">
-          <div class="left-item">
-            <div>
-              <h4>{{ item.name }}</h4>
-              <b>{{ item.amount }}x</b>
-            </div>
-            <p>{{ helper.formatPrice(item.price) }}</p>
-          </div>
-
-          <p>
-            <b>{{ helper.formatPrice(item.total) }}</b>
-          </p>
-        </div>
-      </div>
+    <div v-if="receipt.items">
+      <q-table flat :rows="receipt.items" :columns="columns" title="Items" row-key="name" />
     </div>
 
     <span v-if="contributors" class="splicer"></span>
-    <div v-if="contributors" class="contributors">
+
+    <div v-if="contributors" class="contributors part">
       <h3>Contributors</h3>
       <ContributorsList :contributors="contributors" />
     </div>
 
     <span class="splicer"></span>
 
-    <div>
+    <div class="part">
       <h3>Picture</h3>
       <img :src="receipt.img_url" alt="" />
     </div>
@@ -88,12 +82,17 @@ ul {
   padding: 0;
   background-color: transparent;
 }
-.receipt {
+
+.part {
   padding: 1rem;
+}
+
+.receipt {
+  background: $card;
   border-radius: 5px;
   max-width: 40rem;
   position: relative;
-  margin: 2rem;
+  margin: 1rem;
 
   & .q-icon {
     margin: 0;

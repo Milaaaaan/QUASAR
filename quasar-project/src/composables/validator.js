@@ -69,4 +69,4 @@ const file = (submitted, acceptedExtensions, required = true) => {
   return ''
 }
 
-export default { name, email, password, file }
+export default { name, email, password, file, number }

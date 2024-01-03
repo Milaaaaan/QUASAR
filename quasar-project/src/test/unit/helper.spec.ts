@@ -1,5 +1,5 @@
 import moment from "moment";
-import helpers from "../../src/composables/helper"; 
+import helpers from "src/composables/helper"; 
 
 describe("Helpers", () => {
   it("formats price correctly", () => {
