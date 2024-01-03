@@ -45,46 +45,15 @@ export const useUserStore = defineStore('userStore', () => {
     { deep: true }
   )
 
-  // Use matchMedia to check the user preference
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
-
-  // Add or remove the "dark" class on the :root element
-  const toggleDarkTheme = (shouldAdd) => {
-    const rootElement = document.documentElement
-    if (shouldAdd) {
-      rootElement.classList.add('dark')
-    } else {
-      rootElement.classList.remove('dark')
-    }
-  }
-
-  // Check/uncheck the toggle and update the theme based on isDark
-  const initializeDarkTheme = (isDark) => {
-    themeToggle.value = isDark
-    toggleDarkTheme(isDark)
-    console.log(Dark)
-  }
-
-  // Initialize the dark theme based on the initial
-  // value of the prefers-color-scheme media query
-  initializeDarkTheme(prefersDark.matches)
-
-  // Listen for changes to the prefers-color-scheme media query
-  prefersDark.addEventListener('change', (mediaQuery) => initializeDarkTheme(mediaQuery.matches))
-
-  // Listen for the toggle check/uncheck to toggle the dark theme
-  const toggleChange = () => {
-    Dark.set(!Dark.isActive)
-    toggleDarkTheme(Dark.isActive)
-  }
-
   const init = async () => {
+    const DARK = JSON.parse(localStorage.getItem('dark'))
     const USER = JSON.parse(localStorage.getItem('user'))
     const TOKEN = JSON.parse(localStorage.getItem('token'))
     const FRIENDS = JSON.parse(localStorage.getItem('friends'))
     const REQUESTS = JSON.parse(localStorage.getItem('requests'))
     const NOTIFIES = JSON.parse(localStorage.getItem('notifies'))
 
+    themeToggle.value = DARK
     if (NOTIFIES) notifications.value = NOTIFIES
     if (USER) user.value = USER
     if (FRIENDS) friends.value = FRIENDS
@@ -93,6 +62,29 @@ export const useUserStore = defineStore('userStore', () => {
       token.value = TOKEN
       useFetch.setToken(TOKEN)
     }
+  }
+
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
+
+  const toggleDarkTheme = (shouldAdd) => {
+    const rootElement = document.documentElement
+    if (shouldAdd) rootElement.classList.add('dark')
+    else rootElement.classList.remove('dark')
+    localStorage.setItem('dark', JSON.stringify(shouldAdd))
+  }
+
+  const initializeDarkTheme = async (isDark) => {
+    await init()
+    toggleDarkTheme(themeToggle.value != null ? themeToggle.value : isDark)
+    Dark.set(themeToggle.value != null ? themeToggle.value : isDark)
+  }
+
+  initializeDarkTheme(prefersDark.matches)
+  prefersDark.addEventListener('change', (mediaQuery) => toggleChange(mediaQuery.matches))
+
+  const toggleChange = () => {
+    Dark.set(!Dark.isActive)
+    toggleDarkTheme(Dark.isActive)
   }
 
   const get = async () => {
@@ -148,7 +140,6 @@ export const useUserStore = defineStore('userStore', () => {
 
   const update = async () => {
     localStorage.setItem('notifies', JSON.stringify(notifications.value))
-    console.log(user.value)
     localStorage.setItem('user', JSON.stringify(user.value))
     localStorage.setItem('token', JSON.stringify(token.value))
     localStorage.setItem('friends', JSON.stringify(friends.value))

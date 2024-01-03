@@ -5,6 +5,7 @@ import { useReceiptStore } from 'src/stores/receipts'
 import { useUserStore } from 'src/stores/user'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import img from 'src/assets/nopfp.jpg'
 
 const useReceipt = useReceiptStore()
 const useUser = useUserStore()
@@ -56,9 +57,30 @@ const creator = computed(() => {
 
     <span v-if="contributors" class="splicer"></span>
 
-    <div v-if="contributors" class="contributors part">
-      <h3>Contributors</h3>
-      <ContributorsList :contributors="contributors" />
+    <div v-if="contributors">
+      <q-list>
+        <q-item-label header>Friends</q-item-label>
+        <div v-for="(contributor, index) in contributors" :key="index">
+          <q-item clickable v-ripple @click="openPopUP(friend)">
+            <q-item-section avatar>
+              <q-avatar>
+                <img :src="contributor.profile_picture ? contributor.profile_picture : img" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label lines="1">{{ contributor.name }}</q-item-label>
+            </q-item-section>
+
+            <q-item-section side top>
+              <q-item-label lines="1">{{ helper.formatPrice(contributor.owed) }} </q-item-label>
+              <q-item-label lines="2"> Owed </q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-separator inset="item" />
+        </div>
+      </q-list>
     </div>
 
     <span class="splicer"></span>
@@ -189,20 +211,6 @@ ul {
 
   & p {
     margin: 0;
-  }
-}
-.contributors {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  .contributor {
-    display: flex;
-    justify-content: space-between;
-
-    & div {
-      display: flex;
-      gap: 1rem;
-    }
   }
 }
 

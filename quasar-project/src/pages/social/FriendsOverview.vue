@@ -4,6 +4,7 @@ import { usePopUpStore } from 'src/stores/popup'
 import img from 'src/assets/nopfp.jpg'
 import { computed } from 'vue'
 import { useFetchStore } from 'src/stores/fetchData'
+import helper from 'src/composables/helper'
 
 const useUser = useUserStore()
 const usePopUp = usePopUpStore()
@@ -99,7 +100,7 @@ const declineFriend = async () => {}
             </q-item-section>
 
             <q-item-section side top>
-              <q-item-label lines="1">€{{ friend.user1_debt }} </q-item-label>
+              <q-item-label lines="1">{{ helper.formatPrice(friend.user1_debt) }} </q-item-label>
               <q-item-label lines="2"> Owed </q-item-label>
             </q-item-section>
           </q-item>

@@ -8,10 +8,8 @@ const useGroup = useGroupStore()
 <template>
   <q-page>
     <section v-if="useGroup.groups && $route.name == 'Groups'">
-      
-
       <q-list>
-        <q-item-label header>Friend requests</q-item-label>
+        <q-item-label header>Joined groups</q-item-label>
         <group-card v-for="group in useGroup.groups" :key="group.id" :group="group" />
       </q-list>
     </section>
