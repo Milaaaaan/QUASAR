@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import validator from '@/composables/validator'
 import { computed, ref } from 'vue'
 import { useFetchStore } from '@/stores/fetchData'

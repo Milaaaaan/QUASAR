@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import img from 'src/assets/nopfp.jpg'
 import { takePicture } from 'src/composables/photo'
 import { useUserStore } from 'src/stores/user'

@@ -34,10 +34,10 @@ onMounted(async () => {
     <i>{{ details.description }}</i>
 
     <div class="buttons">
-      <q-btn color="primary" router-link="/create/bill" router-direction="forward">
+      <q-btn color="primary" to="/create/bill">
         + <q-icon color="light" size="small" aria-hidden="true" name="person" />
       </q-btn>
-      <q-btn color="primary" router-link="/create/bill" router-direction="forward">
+      <q-btn color="primary" to="/create/bill">
         + <q-icon color="light" size="small" aria-hidden="true" name="receipt" />
       </q-btn>
     </div>

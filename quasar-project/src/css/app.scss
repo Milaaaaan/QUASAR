@@ -48,8 +48,6 @@ p {
 }
 */
 
-
-
 label {
   margin-bottom: 1rem;
 }
@@ -82,7 +80,7 @@ label {
 .flex {
   display: flex;
   flex-wrap: wrap;
-  align-content: center;
+  align-content: start;
 }
 
 .q-uploader .q-btn {
@@ -91,8 +89,8 @@ label {
 
 .default {
   display: flex;
-  padding: 1rem;
   flex-direction: column;
+  padding: 1rem;
 }
 
 // DARK THEME

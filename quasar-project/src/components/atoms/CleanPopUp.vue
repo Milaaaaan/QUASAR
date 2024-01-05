@@ -4,7 +4,7 @@ import ProfilePicture from './ProfilePicture.vue'
 import helper from 'src/composables/helper'
 import QrcodeVue from 'qrcode.vue'
 import { useUserStore } from 'src/stores/user'
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
 
 const usePopUp = usePopUpStore()
@@ -18,35 +18,62 @@ watch(usePopUp, () => {
     document.body.style.overflow = 'auto'
   }
 })
+
+const details = computed(() => {
+  return usePopUp.details
+})
+
+const owed = () => {
+  if (details.value.user1_debt < 0) return `Owed ${helper.formatPrice(details.value.user1_debt)}`
+  else if (details.value.user1_debt == 0) return 'You are even'
+  else return `${helper.formatPrice(details.value.user1_debt)} in your debt`
+}
+
+
+
 </script>
 
 <template>
-  <dialog v-if="usePopUp.open" class="pop-up-container">
-    <span @click="usePopUp.open = false"></span>
-    <div class="pop-up">
-      <div v-if="usePopUp.type == 'QR'" class="QR">
-        <i><b>Code: </b>{{ usePopUp.details.qr }}</i>
-        <qrcode-vue
-          :foreground="$q.dark.isActive ? '#FFFF' : '#000'"
-          background="transparent"
-          :value="usePopUp.details.qr"
-          level="H"
-        />
-      </div>
+  <q-dialog v-model="usePopUp.open" class="dialog">
+    <q-card-section v-if="usePopUp.type == 'QR'" class="QR pop-up">
+      <i><b>Code: </b>{{ details.qr }}</i>
+      <qrcode-vue
+        :foreground="$q.dark.isActive ? '#FFFF' : '#000'"
+        background="transparent"
+        :value="details.qr"
+        level="H"
+      />
+    </q-card-section>
 
-      <div v-else-if="usePopUp.type == 'friend'">
-        <ProfilePicture :pic="usePopUp.details.profile_picture" />
-        <h3>{{ usePopUp.details.name }}</h3>
-        <i> Friends since: {{ helper.cleanEU(usePopUp.details.created_at) }} </i>
+    <q-card-section v-else-if="usePopUp.type == 'friend'" class="pop-up">
+      <ProfilePicture :pic="details.profile_picture" />
+      <h3>{{ details.name }}</h3>
+      {{ details }}
 
-        <q-btn color="negative">Verwijder vriend</q-btn>
-      </div>
+      <q-list separator>
+        <q-item clickable v-ripple v-if="details.friend">
+          <q-item-section side>Friends since: {{ helper.cleanEU(details.created_at) }}</q-item-section>
+        </q-item>
 
-      <div v-else>
-        {{ usePopUp.details }}
+        <q-item clickable v-ripple>
+          <q-item-section side>{{ owed() }}</q-item-section>
+        </q-item>
+        <q-item clickable v-ripple>
+          <q-item-section side>Friends since: {{ helper.cleanEU(details.created_at) }}</q-item-section>
+        </q-item>
+      </q-list>
+
+      <div class="buttons">
+        <q-btn v-if="!details.friend || !details.requested" color="positive" icon="person">Add as friend</q-btn>
+        <q-btn v-if="friend" color="negative" icon="person">Remove friend</q-btn>
+        <q-btn v-if="details.user1_debt < 0" color="primary" icon="attach_money">Repay dept</q-btn>
       </div>
-    </div>
-  </dialog>
+    </q-card-section>
+
+    <q-card-section v-else class="pop-up">
+      {{ details }}
+    </q-card-section>
+  </q-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -61,44 +88,21 @@ watch(usePopUp, () => {
     color: var(--ion-text-color);
   }
 }
-span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.pop-up-container {
-  z-index: 100;
-  border: none;
-  padding: 0;
+
+.buttons {
   display: flex;
-  background: #1a1a1a20;
-  backdrop-filter: blur(3px);
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  position: fixed;
-  align-items: center;
-  justify-content: center;
-}
-.pop-up {
-  padding: 2rem 1rem;
-  background-color: $card;
-  border-radius: 10px;
-  max-width: 35rem;
-  width: calc(100% - 4rem);
-  display: flex;
-  align-items: center;
   gap: 1rem;
   flex-direction: column;
 }
 
-.body--dark {
-  .pop-up {
-    color: $step-50;
-    background-color: $step-950;
+.pop-up {
+  padding: 1rem;
+  background: $step-50;
+}
+
+html.dark {
+  .dialog div {
+    background: $step-850;
   }
 }
 </style>
