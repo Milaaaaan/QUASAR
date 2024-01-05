@@ -39,7 +39,6 @@ const showQr = () => {
         <i>Member since: {{ helper.cleanEU(useUser.user.created_at) }}</i>
       </div>
       <hr />
-      <h3>Notifications 123</h3>
       <NotificationsCard :notifies="useUser.notifications" />
 
       <q-list padding separator>

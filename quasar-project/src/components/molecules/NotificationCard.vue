@@ -28,7 +28,6 @@ const seen = async (notification) => {
 }
 
 const remove = async (notification) => {
-  console.log(notification)
   try {
     await useFetch.fetch(`/notifications/${notification.id}/remove`, 'del', null, true, false, true)
     notification.synced = true

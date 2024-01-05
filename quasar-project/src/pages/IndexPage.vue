@@ -15,25 +15,45 @@ const owed = computed(() => {
   const receipts = useReceipt.receipts // Add type annotation
   const userId = useUser.user.id // Add type annotation
 
+  console.log(receipts)
+
   receipts.forEach((receipt) => {
     // Add type annotation
-    receipt.contributors.forEach((contributor) => {
-      // Add type annotation
-      if (contributor.user_id === userId) {
-        const category = useReceipt.category.find((x) => x.id == receipt.category)
-        if (!userOwes[category.id]) {
-          userOwes[category.id] = {
-            // Create an object with desired properties
-            id: category.id,
-            icon: category?.icon,
-            title: category?.title,
-            type: category?.type,
+
+    if (receipt.type !== 'personal') {
+      receipt.contributors.forEach((contributor) => {
+        // Add type annotation
+        if (contributor.user_id === userId) {
+          const category = useReceipt.category.find((x) => x.id == receipt.category)
+          if (!userOwes[category.id]) {
+            userOwes[category.id] = {
+              // Create an object with desired properties
+              id: category.id,
+              label: category?.label,
+              icon: category?.icon,
+              title: category?.title,
+              type: category?.type,
+            }
+            userOwes[category.id].total = 0
           }
-          userOwes[category.id].total = 0
+          userOwes[category.id].total += contributor.owed // Update the total property
         }
-        userOwes[category.id].total += contributor.owed // Update the total property
+      })
+    } else {
+      const category = useReceipt.category.find((x) => x.id == receipt.category)
+      if (!userOwes[category.id]) {
+        userOwes[category.id] = {
+          // Create an object with desired properties
+          id: category.id,
+          label: category?.label,
+          icon: category?.icon,
+          title: category?.title,
+          type: category?.type,
+        }
+        userOwes[category.id].total = 0
       }
-    })
+      userOwes[category.id].total += receipt.total // Update the total property
+    }
   })
 
   const sortedOwes = Object.values(userOwes).sort((a, b) => a.id - b.id) // Sort by id
@@ -63,12 +83,29 @@ const typeColors = (type) => {
 }
 
 const data = computed(() => {
+  const backgroundColors = owed.value.userOwes.map((owe) => typeColors(owe.type))
+  const colorCount = {}
+
+  const modifiedBackgroundColors = backgroundColors.map((color) => {
+    if (!colorCount[color]) {
+      colorCount[color] = 1
+    } else {
+      colorCount[color]++
+    }
+
+    const opacity = colorCount[color] / backgroundColors.filter((c) => c === color).length
+    const modifiedColor = `${color}${Math.round(opacity * 255).toString(16)}`
+
+    return modifiedColor
+  })
+
   return {
-    labels: owed.value.userOwes.map((owe) => owe.title),
+    labels: owed.value.userOwes.map((owe) => owe.label),
     datasets: [
       {
-        backgroundColor: owed.value.userOwes.map((owe) => typeColors(owe.type)),
+        backgroundColor: modifiedBackgroundColors,
         data: owed.value.userOwes.map((owe) => owe.total),
+        borderColor: 'transparent',
       },
     ],
   }
@@ -79,6 +116,7 @@ const data = computed(() => {
   <q-page>
     <section v-if="owed.userOwes && useReceipt.category">
       <Pie :data="data" :options="options" />
+      {{ data }}
     </section>
   </q-page>
 </template>
