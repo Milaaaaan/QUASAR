@@ -20,15 +20,21 @@ span {
   text-align: center;
   height: 2px;
   width: 100%;
-  background-color: var(--ion-color-step-400);
+  background-color: $step-450;
 
   & b {
-    background-color: var(--card);
+    background-color: $card;
     padding: 0.5rem 1.5rem;
     position: relative;
     top: -0.5rem;
     margin: 0;
     text-align: center;
+  }
+}
+
+:root.dark {
+  b {
+    background-color: $step-800;
   }
 }
 </style>

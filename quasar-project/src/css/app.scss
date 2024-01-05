@@ -48,6 +48,10 @@ p {
 }
 */
 
+label {
+  margin-bottom: 1rem;
+}
+
 .q-stepper--horizontal .q-stepper__step-inner {
   padding: 1rem;
 }
@@ -69,6 +73,14 @@ p {
 
 .q-panel {
   overflow: visible;
+}
+
+.row,
+.column,
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
 }
 
 .q-uploader .q-btn {
@@ -107,7 +119,7 @@ p {
 
   section,
   form {
-    background-color: $step-800;
+    background-color: $step-900;
     color: $background;
   }
 

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import img from 'src/assets/nopfp.jpg'
 
 defineProps({

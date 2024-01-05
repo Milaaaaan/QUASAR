@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import validator from 'src/composables/validator'
 import router from 'src/router'
 import { useFetchStore } from 'src/stores/fetchData'
@@ -75,14 +75,14 @@ const submit = async () => {
         placeholder="Fill in a friends personal code in"
       />
 
-      <q-btn @click="submit()">
+      <q-btn size="large" color="primary" @click="submit()">
         <p v-if="!loading">Add Friend</p>
-        <IonSpinner v-else name="circles" />
+        <q-spinner-tail v-else color="white" />
       </q-btn>
 
       <FormSplitter v-if="isSupported" text="OR" />
 
-      <q-btn v-if="isSupported" @click="scan" class="upload">
+      <q-btn size="large" v-if="isSupported" @click="scan" class="upload">
         <ion-icon aria-hidden="true" :icon="camera" />
         Scan QR code
       </q-btn>
@@ -102,6 +102,10 @@ ion-content {
   padding: 1rem;
   border-radius: 5px;
   border: 2px dotted $primary;
+}
+
+button {
+  width: 100%;
 }
 
 .body--dark {

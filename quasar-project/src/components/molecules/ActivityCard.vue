@@ -1,5 +1,4 @@
 <script setup>
-import ContributorsList from 'src/components/molecules/ContributorsList.vue'
 import helper from 'src/composables/helper'
 import { useGroupStore } from 'src/stores/groups'
 import { useReceiptStore } from 'src/stores/receipts'
@@ -7,8 +6,6 @@ import { useUserStore } from 'src/stores/user'
 import { computed, ref } from 'vue'
 
 const useUser = useUserStore()
-const useReceipt = useReceiptStore()
-const useGroup = useGroupStore()
 const open = ref(false)
 
 const props = defineProps({
@@ -48,12 +45,12 @@ const toggle = (event) => {
         <h3>{{ value.title }}</h3>
         <div class="type">
           <p>{{ value.type }}</p>
-          <p v-if="contributors.length > 2">{{ contributors.length }} Persons</p>
+          <p v-if="contributors.length > 2">| {{ contributors.length }} Persons</p>
+          <p class="name" v-if="contributors.length == 2">| {{ contributors[1].name }} Persons</p>
         </div>
       </div>
       <div>
         <h4>€{{ value.total }}</h4>
-        
       </div>
     </div>
   </router-link>
@@ -67,10 +64,18 @@ const toggle = (event) => {
   border-radius: 5px;
   font-size: 0.8rem;
 }
+
+.name {
+  text-overflow: ellipsis;
+  max-width: 8rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .type {
   margin-top: 0.5rem;
   display: flex;
-  gap: 1rem;
+  gap: 0.3rem;
   align-items: center;
 }
 .contributors {

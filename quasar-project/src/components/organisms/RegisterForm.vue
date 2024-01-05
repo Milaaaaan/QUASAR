@@ -26,7 +26,7 @@ const passError = computed(() => {
 
 const useFetch = useFetchStore()
 
-const TryRegistrating = async () => {
+const register = async () => {
   submitted.value = true
   if (!passError.value) {
     //TODO: LOADING ANIM
@@ -70,24 +70,32 @@ const validateStepOne = async () => {
 <template>
   <form ref="form" @submit.prevent novalidate>
     <h2>Register</h2>
-    <div v-if="step == 1">
-      <CleanInput :error="nameError" v-model="name" label="Name" placeholder="Enter your full name" />
+    <q-input
+      v-model="name"
+      label="Name"
+      filled
+      placeholder="Enter your full name"
+      :error-message="nameError"
+      :error="submitted && nameError != ''"
+    />
 
-      <CleanInput :error="emailError" v-model="email" label="Email" type="email" placeholder="Your emailaddress" />
+    <q-input
+      v-model="email"
+      label="Email"
+      filled
+      placeholder="Your emailaddress"
+      :error-message="emailError"
+      :error="submitted && emailError != ''"
+    />
 
-      <IonButton @click="validateStepOne">Next step</IonButton>
-    </div>
+    <CleanInput :error="passError" v-model="pass" type="password" label="Password" />
 
-    <div v-if="step == 2">
-      <CleanInput :error="passError" v-model="pass" type="password" label="Password" />
+    <CleanInput :error="passError" v-model="passRepeat" type="password" label="Password repeat" />
 
-      <CleanInput :error="passError" v-model="passRepeat" type="password" label="Password repeat" />
-
-      <IonButtons>
-        <IonButton @click="step--">go back</IonButton>
-        <IonButton @click="TryRegistrating">Register</IonButton>
-      </IonButtons>
-    </div>
+    <q-btn size="large" color="primary" @click="register">
+      <q-spinner-tail v-if="loading" color="white" />
+      <p v-else>Sign up</p>
+    </q-btn>
   </form>
 </template>
 

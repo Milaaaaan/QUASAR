@@ -63,28 +63,30 @@ const tryLogin = async () => {
           label="Password"
         />
 
-        <q-btn @click="tryLogin">
+        <q-btn size="large" color="primary" @click="tryLogin">
           <q-spinner-tail v-if="loading" color="white" />
           <p v-else>Login</p>
         </q-btn>
 
         <FormSplitter text="No account yet?" />
 
-        <RouterLink to="/register" router-direction="forward"> Register </RouterLink>
+        <RouterLink to="/register" router-direction="forward"> Maken an account </RouterLink>
       </form>
     </section>
   </q-page>
 </template>
 
-<style scoped>
-.toolbar {
-  display: flex;
-  height: 100%;
-  --background: var(--main);
+<style scoped lang="scss">
+button {
+  width: 100%;
 }
 
 section {
   padding: 0;
+}
+
+a {
+  color: $primary;
 }
 
 section {

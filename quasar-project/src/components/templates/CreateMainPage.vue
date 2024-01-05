@@ -69,7 +69,7 @@ i {
 
 ul {
   padding: 0;
-  margin: 2rem 0;
+  margin: 2rem 1rem;
   display: flex;
   gap: 2rem;
   align-items: center;
@@ -92,7 +92,7 @@ ul {
       text-decoration: none;
       color: $text;
       text-align: center;
-      padding: 1rem;
+      padding: 0.5rem;
       position: relative;
       width: 100%;
       border: none;
@@ -122,7 +122,20 @@ ul {
     }
   }
 }
+
+section {
+  background-color: transparent !important;
+}
 .cards {
   height: 90%;
+}
+
+.body--dark {
+  ul li {
+    background-color: $step-850;
+    h2 {
+      color: $step-50;
+    }
+  }
 }
 </style>

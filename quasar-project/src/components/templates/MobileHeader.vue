@@ -64,7 +64,7 @@ h1 {
   width: calc(100% - 2rem);
   display: flex;
   margin: 1rem;
-  height: 12rem;
+  height: 11rem;
   justify-content: center;
   align-items: flex-start;
   transition: height 0.5s ease-in-out;
@@ -72,7 +72,7 @@ h1 {
 
 .toolbar {
   display: flex;
-  height: 12rem;
+  height: 11rem;
   --background: none;
   --background: var(--ion-background-color);
   z-index: 1;
