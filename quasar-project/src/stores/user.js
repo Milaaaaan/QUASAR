@@ -37,7 +37,6 @@ export const useUserStore = defineStore('userStore', () => {
             notifications.value.push(data.notification)
             update()
             sync()
-            console.log(data.notification.title)
           })
         }
       } else pusher.disconnect()

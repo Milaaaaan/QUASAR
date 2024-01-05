@@ -6,8 +6,10 @@ import QrcodeVue from 'qrcode.vue'
 import { useUserStore } from 'src/stores/user'
 import { computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
+import { useFetchStore } from 'src/stores/fetchData'
 
 const usePopUp = usePopUpStore()
+const useFetch = useFetchStore()
 const useUser = useUserStore()
 const $q = useQuasar()
 
@@ -29,8 +31,15 @@ const owed = () => {
   else return `${helper.formatPrice(details.value.user1_debt)} in your debt`
 }
 
-
-
+const addfriend = async () => {
+  await useFetch.fetch('/friends/add', 'post', { id: details.value.id }, true, true, false)
+  const index = useUser.friends.findIndex((x) => x.id === details.value.id)
+  if (index !== -1) {
+    useUser.friends[index].requested = true
+    useUser.friends[index].user1_id = useUser.user.id
+  }
+  useUser.update()
+}
 </script>
 
 <template>
@@ -64,8 +73,10 @@ const owed = () => {
       </q-list>
 
       <div class="buttons">
-        <q-btn v-if="!details.friend || !details.requested" color="positive" icon="person">Add as friend</q-btn>
-        <q-btn v-if="friend" color="negative" icon="person">Remove friend</q-btn>
+        <q-btn v-if="!details.friend || !details.requested" @click="addfriend" color="positive" icon="person"
+          >Add as friend</q-btn
+        >
+        <q-btn v-if="friend" color="negative" icon="person" @click="removeFriend">Remove friend</q-btn>
         <q-btn v-if="details.user1_debt < 0" color="primary" icon="attach_money">Repay dept</q-btn>
       </div>
     </q-card-section>

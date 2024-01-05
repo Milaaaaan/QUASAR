@@ -58,15 +58,15 @@ export const useFetchStore = defineStore('fetchStore', () => {
       if (useConnection.isConnected) {
         if (type.toLocaleLowerCase() === 'post') data = (await axios.post(url, payload)).data
         else if (type.toLocaleLowerCase() === 'put') data = (await axios.put(url, payload)).data
-        else if (type.toLocaleLowerCase() === 'del') data = await axios.delete(url)
+        else if (type.toLocaleLowerCase() === 'del') data = (await axios.delete(url)).data
         else data = await (await axios.get(url)).data
 
-        if (showMessage) responses.value.push({ message: data.message, type: 'positive' })
+        if (showMessage) responses.value.unshift({ message: data.message, type: 'positive' })
 
         if (allData) return data
         return data.data
       } else if (showErrors) {
-        responses.value.push({ message: 'No internet connection', type: 'negative' })
+        responses.value.unshift({ message: 'No internet connection', type: 'negative' })
       }
     } catch (e) {
       if (showErrors) handleErrors(e, throwError)
@@ -80,7 +80,7 @@ export const useFetchStore = defineStore('fetchStore', () => {
     if (data.response && data.response.data.message) message = data.response.data.message
     else message = 'Something went wrong please try again later.'
 
-    responses.value.push({
+    responses.value.unshift({
       message: message,
       type: 'negative',
     })
