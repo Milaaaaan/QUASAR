@@ -40,6 +40,17 @@ const addfriend = async () => {
   }
   useUser.update()
 }
+
+const removeFriend = async () => {
+  await useFetch.fetch(`/friends/remove/${details.value.friend_id}`, 'del', null, true, true, false)
+  const index = useUser.friends.findIndex((x) => x.id === details.value.id)
+  if (index !== -1) {
+    useUser.friends[index].friend = false
+    useUser.friends[index].user1_id = null
+    useUser.friends[index].requested = false
+  }
+  useUser.update()
+}
 </script>
 
 <template>
@@ -57,7 +68,6 @@ const addfriend = async () => {
     <q-card-section v-else-if="usePopUp.type == 'friend'" class="pop-up">
       <ProfilePicture :pic="details.profile_picture" />
       <h3>{{ details.name }}</h3>
-      {{ details }}
 
       <q-list separator>
         <q-item clickable v-ripple v-if="details.friend">
@@ -76,7 +86,7 @@ const addfriend = async () => {
         <q-btn v-if="!details.friend || !details.requested" @click="addfriend" color="positive" icon="person"
           >Add as friend</q-btn
         >
-        <q-btn v-if="friend" color="negative" icon="person" @click="removeFriend">Remove friend</q-btn>
+        <q-btn v-if="details.friend" color="negative" icon="person" @click="removeFriend">Remove friend</q-btn>
         <q-btn v-if="details.user1_debt < 0" color="primary" icon="attach_money">Repay dept</q-btn>
       </div>
     </q-card-section>

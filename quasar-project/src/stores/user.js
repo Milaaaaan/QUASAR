@@ -30,11 +30,11 @@ export const useUserStore = defineStore('userStore', () => {
         if (!listener.value) {
           listener.value = pusher.subscribe('user.' + user.value.id)
           listener.value.bind('new-notification', function (data) {
-            useFetch.responses.push({
+            useFetch.responses.unshift({
               message: data.notification.title,
               type: 'info',
             })
-            notifications.value.push(data.notification)
+            notifications.value.unshift(data.notification)
             update()
             sync()
           })

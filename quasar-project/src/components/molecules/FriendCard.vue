@@ -32,7 +32,7 @@ const openPopUP = (details) => {
 }
 
 const acceptFriend = async (x) => {
-  const friend = await useFetch.fetch('/friends/accept', 'post', { id: x.friend_id }, true, true, false)
+  await useFetch.fetch('/friends/accept', 'post', { id: x.friend_id }, true, true, false)
   const index = useUser.friends.findIndex((request) => request.friend_id === x.friend_id)
   x.friend = true
   if (index !== -1) {
@@ -42,10 +42,10 @@ const acceptFriend = async (x) => {
 }
 
 const declineFriend = async (x) => {
-  const friend = await useFetch.fetch(`/friends/decline/${x.friend_id}`, 'del', null, true, true, false)
+  await useFetch.fetch(`/friends/remove/${x.friend_id}`, 'del', null, true, true, false)
   const index = useUser.friends.findIndex((request) => request.friend_id === x.friend_id)
   if (index !== -1) {
-    useUser.friends.splice(index, 1)
+    useUser.friends[index].requested = false
   }
   useUser.update()
 }
