@@ -3,19 +3,19 @@
 <template>
   <section class="cards" v-if="$route.name == 'Create'">
     <ul>
-      <li>
+      <li class="card">
         <RouterLink to="/social/friends/add" class="friend">
           <q-icon size="xxx-large" color="light" name="person" />
           <h2>Add a friend</h2>
         </RouterLink>
       </li>
-      <li>
+      <li class="card">
         <RouterLink to="/social/groups/add" class="group">
           <q-icon size="xxx-large" color="light" name="people" />
           <h2>Make a group</h2>
         </RouterLink>
       </li>
-      <li>
+      <li class="card">
         <RouterLink to="/create/bill" class="you">
           <q-icon size="xxx-large" color="light" name="receipt" />
           <h2>Make a bill</h2>

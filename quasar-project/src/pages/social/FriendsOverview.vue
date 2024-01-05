@@ -5,6 +5,7 @@ import img from 'src/assets/nopfp.jpg'
 import { computed } from 'vue'
 import { useFetchStore } from 'src/stores/fetchData'
 import helper from 'src/composables/helper'
+import FriendCard from 'src/components/molecules/FriendCard.vue'
 
 const useUser = useUserStore()
 const usePopUp = usePopUpStore()
@@ -16,6 +17,10 @@ const requests = computed(() => {
 
 const friends = computed(() => {
   return useUser.friends.filter((friend) => friend.friend)
+})
+
+const others = computed(() => {
+  return useUser.friends.filter((friend) => !friend.friend && !friend.requested)
 })
 
 const openPopUP = (details) => {
@@ -85,29 +90,8 @@ const declineFriend = async () => {}
         </q-list>
       </div>
 
-      <q-list>
-        <q-item-label header>Friends</q-item-label>
-        <div v-for="(friend, index) in friends" :key="index">
-          <q-item clickable v-ripple @click="openPopUP(friend)">
-            <q-item-section avatar>
-              <q-avatar>
-                <img :src="friend.profile_picuture ? friend.profile_picuture : img" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label lines="1">{{ friend.name }}</q-item-label>
-            </q-item-section>
-
-            <q-item-section side top>
-              <q-item-label lines="1">{{ helper.formatPrice(friend.user1_debt) }} </q-item-label>
-              <q-item-label lines="2"> Owed </q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator inset="item" />
-        </div>
-      </q-list>
+      <FriendCard :friends="friends" label="Friends" />
+      <FriendCard :friends="others" label="Others" />
     </section>
 
     <RouterView v-else></RouterView>

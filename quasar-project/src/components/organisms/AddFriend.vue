@@ -99,7 +99,7 @@ ion-content {
   background-color: $step-100;
   width: 100%;
   margin: 1rem 0;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 5px;
   border: 2px dotted $primary;
 }

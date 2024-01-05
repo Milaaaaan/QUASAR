@@ -34,7 +34,7 @@ span {
 
 :root.dark {
   b {
-    background-color: $step-800;
+    background-color: $step-850;
   }
 }
 </style>

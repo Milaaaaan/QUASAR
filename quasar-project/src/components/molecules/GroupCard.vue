@@ -19,13 +19,9 @@ defineProps({
       </q-item-section>
       <q-item-section>
         <q-item-label lines="1">{{ group.name }}</q-item-label>
-        <q-item-label lines="1">{{ group.description }}</q-item-label>
+        <q-item-label lines="2">{{ group.description }}</q-item-label>
       </q-item-section>
 
-      <q-item-section side top>
-        <q-item-label lines="1">€{{ group.user1_debt }} </q-item-label>
-        <q-item-label lines="2"> Owed </q-item-label>
-      </q-item-section>
     </q-item>
 
     <q-separator inset="item" />

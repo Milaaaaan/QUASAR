@@ -3,9 +3,9 @@ import { useGroupStore } from 'src/stores/groups'
 import { useReceiptStore } from 'src/stores/receipts'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import ActivityCard from '../molecules/ActivityCard.vue'
 import FriendCard from '../molecules/FriendCard.vue'
 import { useUserStore } from 'src/stores/user'
+import ReceiptTimeline from 'src/components/molecules/ReceiptTimeline.vue'
 
 const useGroup = useGroupStore()
 const useReceipt = useReceiptStore()
@@ -33,11 +33,11 @@ onMounted(async () => {
     <h2>{{ details.name }}</h2>
     <i>{{ details.description }}</i>
 
-    <div class="actions">
-      <q-btn router-link="/create/bill" router-direction="forward">
-        <q-icon color="light" size="small" aria-hidden="true" name="personAdd" />
+    <div class="buttons">
+      <q-btn color="primary" router-link="/create/bill" router-direction="forward">
+        + <q-icon color="light" size="small" aria-hidden="true" name="person" />
       </q-btn>
-      <q-btn router-link="/create/bill" router-direction="forward">
+      <q-btn color="primary" router-link="/create/bill" router-direction="forward">
         + <q-icon color="light" size="small" aria-hidden="true" name="receipt" />
       </q-btn>
     </div>
@@ -50,19 +50,12 @@ onMounted(async () => {
     <q-separator />
 
     <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="Acitivty">
-        <activity-card
-          v-for="(item, index) in details.receipts"
-          link="Group receipt detail"
-          :key="index"
-          :index="index"
-          :value="item"
-          :id="index"
-        />
+      <q-tab-panel name="Acitivty" class="pad">
+        <ReceiptTimeline :receipts="details.receipts" />
       </q-tab-panel>
 
-      <q-tab-panel name="Members">
-        <friend-card v-for="(friend, index) in details.members" :key="index" :details="friend" />
+      <q-tab-panel name="Members" class="no-pad">
+        <friend-card :friends="details.members" />
       </q-tab-panel>
     </q-tab-panels>
   </section>
@@ -75,24 +68,29 @@ section {
 
 .body--dark {
   .q-tab-panels {
-    background: $step-800;
+    background: transparent;
   }
 }
 
 .q-panel {
   will-change: scroll-position;
-  
-  > div {
-    padding: 0;
-  }
 }
 
 .q-tab-panels {
   background: $background;
 }
 
-.actions {
+.no-pad {
+  padding: 0;
+}
+
+.pad {
+  padding: 1rem;
+}
+
+.buttons {
   display: flex;
+  flex-direction: row-reverse;
   gap: 1rem;
 }
 </style>

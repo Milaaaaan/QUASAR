@@ -1,85 +1,69 @@
 <script setup>
-import CleanPopUp from 'src/components/atoms/CleanPopUp.vue'
+import helper from 'src/composables/helper'
+import img from 'src/assets/nopfp.jpg'
 import { usePopUpStore } from 'src/stores/popup'
-import { ref } from 'vue'
-import ProfilePicture from 'src/components/atoms/ProfilePicture.vue'
 
 const usePopUp = usePopUpStore()
-
 const props = defineProps({
-  details: {
+  friends: {
     required: true,
     type: Object,
   },
+  label: {
+    required: true,
+    type: String,
+  },
 })
 
-const openPopUP = () => {
-  usePopUp.type = 'friend'
-  usePopUp.details = props.details
-  usePopUp.open = true
+const owed = (friend) => {
+  if (friend.user1_debt < 0) return 'Owed'
+  else if (friend.user1_debt == 0) return 'Even'
+  else return 'Owes you'
 }
 
-const open = ref(false)
+const openPopUP = (details) => {
+  usePopUp.type = 'friend'
+  usePopUp.details = details
+  usePopUp.open = true
+}
 </script>
 
 <template>
-  <div class="card" @click="openPopUP">
-    <ProfilePicture size="small" :pic="details.profile_picture" />
+  <q-list>
+    <q-item-label header>{{ label }}</q-item-label>
+    <div v-for="(friend, index) in friends" :key="index">
+      <q-item clickable v-ripple @click="openPopUP(friend)">
+        <q-item-section avatar>
+          <q-avatar>
+            <img :src="friend.profile_picuture ? friend.profile_picuture : img" />
+          </q-avatar>
+        </q-item-section>
 
-    <div class="info">
-      <div>
-        <h3>{{ details.name }}</h3>
-      </div>
-      <div>
-        <h3>{{ details.user1_debt }}</h3>
-        <p>Verschuldigd</p>
-      </div>
+        <q-item-section>
+          <q-item-label lines="1">{{ friend.name }}</q-item-label>
+        </q-item-section>
+
+        <q-item-section :class="owed(friend)" side top>
+          <q-item-label lines="1">{{ helper.formatPrice(friend.user1_debt) }} </q-item-label>
+          <q-item-label lines="2"> {{ owed(friend) }} </q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-separator inset="item" />
     </div>
-  </div>
-  <CleanPopUp v-if="open" :details="details" />
+  </q-list>
 </template>
 
 <style scoped lang="scss">
-.card {
-  margin: 1rem 0;
-  padding: 0.5rem;
-  background-color: $card;
-  border-radius: 10px;
-  max-width: 35rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.column {
+  align-content: start;
+}
 
-  & .info {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
+.Owed {
+  color: $negative !important;
+}
 
-    & div:last-child {
-      text-align: end;
-    }
-
-    & div:first-child {
-      text-align: start;
-    }
-
-    & p {
-      margin: 0;
-    }
-  }
-
-  & .img {
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-
-    & .pfp {
-      border-radius: 50%;
-      width: 3rem;
-    }
-  }
+.Owes {
+  color: $positive !important;
 }
 </style>

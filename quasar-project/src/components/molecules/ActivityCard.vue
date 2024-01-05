@@ -1,7 +1,5 @@
 <script setup>
 import helper from 'src/composables/helper'
-import { useGroupStore } from 'src/stores/groups'
-import { useReceiptStore } from 'src/stores/receipts'
 import { useUserStore } from 'src/stores/user'
 import { computed, ref } from 'vue'
 
@@ -31,11 +29,6 @@ const props = defineProps({
 const contributors = computed(() => {
   return helper.getContribrutors(props.value, useUser.user, useUser.friends)
 })
-
-const toggle = (event) => {
-  event.preventDefault()
-  open.value = !open.value
-}
 </script>
 
 <template>

@@ -48,6 +48,8 @@ p {
 }
 */
 
+
+
 label {
   margin-bottom: 1rem;
 }
@@ -119,13 +121,13 @@ label {
 
   section,
   form {
-    background-color: $step-900;
+    background-color: $step-850;
     color: $background;
   }
 
   .card {
-    background-color: $step-850;
-    filter: drop-shadow(0px 0px 3px $step-750);
+    background-color: $step-750;
+    filter: drop-shadow(0px 0px 2px $step-950);
     color: $background;
   }
 }

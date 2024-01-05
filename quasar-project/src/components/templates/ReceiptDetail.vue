@@ -48,7 +48,7 @@ const creator = computed(() => {
         <b>{{ creator.name }}</b>
       </p>
     </div>
-
+    {{ receipt }}
     <span v-if="receipt.items" class="splicer"></span>
 
     <div v-if="receipt.items">
