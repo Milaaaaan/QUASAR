@@ -19,7 +19,7 @@ export const useReceiptStore = defineStore('receiptsStore', () => {
     { id: 8, icon: 'card_giftcard', label: 'Gift', type: 'General' },
     { id: 9, icon: 'fitness_center', label: 'Healthcare', type: 'General' },
     { id: 10, icon: 'calculate', label: 'Taxes', type: 'General' },
-    { id: 11, icon: 'emoji_objects', label: 'Luxery', type: 'General' },
+    { id: 11, icon: 'diamond', label: 'Luxery', type: 'General' },
     { id: 12, icon: 'build', label: 'Maintenance', type: 'General' },
     { id: 13, icon: 'receipt', label: 'Other', type: 'General' },
 

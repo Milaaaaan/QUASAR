@@ -3,7 +3,7 @@ import helper from 'src/composables/helper'
 import ActivityCard from 'src/components/molecules/ActivityCard.vue'
 import { useReceiptStore } from 'src/stores/receipts'
 
-defineProps({
+const props = defineProps({
   receipts: {
     type: Array,
     required: true,
@@ -19,14 +19,16 @@ const color = (type) => {
   if (x === 'General') return 'blue'
   if (x === 'Recreation') return 'green'
 }
+
 </script>
 
 <template>
+  
   <q-timeline>
     <q-timeline-entry
       v-for="(item, index) in receipts"
       :key="index"
-      :icon="useReceipt.category[item.category - 1].icon"
+      :icon="useReceipt.category[item.category].icon"
       :color="color(item.category)"
     >
       <template v-slot:subtitle> {{ helper.cleanTime(item.created_at) }} </template>

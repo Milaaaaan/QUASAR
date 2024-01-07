@@ -22,19 +22,17 @@ const submit = async () => {
       //TODO: YOU NEED TO BE ONLINE
       loading.value = true
 
-      const payload = {
-        name: title.value,
-        description: description.value,
-        img: image.value,
-      }
+      const formData = new FormData()
+      formData.append('name', title.value)
+      formData.append('description', description.value)
+      formData.append('img', image.value)
 
       //TODO: if online, validate and sync
-      const group = await useFetch.fetch('/groups/create', 'post', payload, true, true, true)
+      const group = await useFetch.fetch('/groups/create', 'post', formData, true, true, true)
 
       useGroup.groups.push(group)
       useGroup.update()
-
-      router.push(`/social/grous/${group.id}`)
+      router.push(`/social/groups/${group.id}`)
     } catch {}
     loading.value = false
   }
@@ -61,6 +59,8 @@ const submit = async () => {
           <span class="text-primary">(optional*)</span>
         </template>
       </q-input>
+
+      {{ image  }}
 
       <q-file filled bottom-slots v-model="image" label counter>
         <template v-slot:prepend>

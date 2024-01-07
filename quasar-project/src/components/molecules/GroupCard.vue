@@ -13,15 +13,14 @@ defineProps({
   <RouterLink :to="{ name: 'Group detail', params: { id: group.id } }">
     <q-item v-ripple clickable>
       <q-item-section avatar>
-        <q-avatar>
-          <img :src="group.profile_picuture ? group.profile_picuture : img" />
+        <q-avatar square>
+          <img :src="group.img ? group.img : img" />
         </q-avatar>
       </q-item-section>
       <q-item-section>
         <q-item-label lines="1">{{ group.name }}</q-item-label>
         <q-item-label lines="2">{{ group.description }}</q-item-label>
       </q-item-section>
-
     </q-item>
 
     <q-separator inset="item" />
