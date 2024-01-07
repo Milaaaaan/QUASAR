@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useGroupStore } from 'src/stores/groups'
 import { useReceiptStore } from 'src/stores/receipts'
 import { onMounted, ref } from 'vue'
@@ -20,7 +20,7 @@ onMounted(async () => {
   details.value = useGroup.groups.filter((x) => x.id == route.params.id)[0]
   details.value.members = useUser.friends.filter((x) => {
     if (x.groups && x.groups.length > 0) {
-      return x.groups.some((y) => y.group_id === 1)
+      return x.groups.some((y) => y.group_id == route.params.id)
     }
     return null
   })
@@ -50,7 +50,7 @@ onMounted(async () => {
     <q-separator />
 
     <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="Acitivty" class="pad">
+      <q-tab-panel name="Acitivty" class="no-pad">
         <ReceiptTimeline :receipts="details.receipts" />
       </q-tab-panel>
 
@@ -82,10 +82,6 @@ section {
 
 .no-pad {
   padding: 0;
-}
-
-.pad {
-  padding: 1rem;
 }
 
 .buttons {

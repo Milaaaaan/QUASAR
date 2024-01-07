@@ -45,7 +45,7 @@ const router = createRouter({
         {
           path: '/social',
           beforeEnter: [authGuard],
-          component: () => import('pages/social/SocialOverview.vue'),
+          component: () => import('pages/social/SocialPage.vue'),
           children: [
             {
               path: 'groups',
@@ -55,9 +55,9 @@ const router = createRouter({
               children: [
                 {
                   path: 'add',
-                  name: 'Create groups',
+                  name: 'Create group',
                   beforeEnter: [authGuard],
-                  component: () => import('components/organisms/AddFriend.vue'),
+                  component: () => import('components/organisms/AddGroup.vue'),
                 },
                 {
                   path: ':id',

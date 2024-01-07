@@ -75,11 +75,8 @@ label {
   overflow: visible;
 }
 
-.row,
-.column,
-.flex {
-  display: flex;
-  flex-wrap: wrap;
+.q-timeline--dense--right .q-timeline__entry--icon .q-timeline__dot {
+  left: 0px;
 }
 
 .q-uploader .q-btn {

@@ -1,12 +1,10 @@
 <script setup>
-import { useFetchStore } from 'src/stores/fetchData'
 import { Keyboard } from '@capacitor/keyboard'
 import { Capacitor } from '@capacitor/core'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const useFetch = useFetchStore()
 const isOpen = ref(false)
 
 Capacitor.getPlatform()
@@ -22,13 +20,6 @@ if (Capacitor.getPlatform() != 'web') {
     console.log('keyboard will hide')
   })
 }
-const close = () => {
-  //useFetch.error = null
-}
-
-const min = computed(() => {
-  return route.name !== 'Register' && route.name !== 'Login'
-})
 
 const isRouteActive = (routePattern) => {
   return route.fullPath.startsWith(routePattern)
@@ -104,7 +95,7 @@ nav {
     }
 
     &.active {
-      color: $primary;
+      color: $primary !important;
 
       &::after {
         height: 0.3rem;

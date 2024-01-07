@@ -1,72 +1,86 @@
 <script setup>
-import validator from '@/composables/validator'
+import validator from 'src/composables/validator'
 import { computed, ref } from 'vue'
-import { useFetchStore } from '@/stores/fetchData'
-import { useUserStore } from '@/stores/user'
-import router from '@/router'
-import FormSplitter from '../atoms/FormSplitter.vue'
-import CleanInput from '../atoms/CleanInput.vue'
+import { useFetchStore } from 'src/stores/fetchData'
+import router from 'src/router'
+import { useGroupStore } from 'src/stores/groups'
 
 const title = ref('')
 const submitted = ref(false)
+const description = ref('')
+const image = ref(null)
 const loading = ref(false)
 const useFetch = useFetchStore()
-const useUser = useUserStore()
+const useGroup = useGroupStore()
 
-const titleError = computed(() =>
-  validator.name(submitted.value, title.value, 'Group title', 7)
-)
+const nameError = computed(() => validator.name(submitted.value, title.value, 'Group title', 3))
 
 const submit = async () => {
   submitted.value = true
-  if (!titleError.value) {
+  if (!nameError.value) {
     try {
       //TODO: YOU NEED TO BE ONLINE
       loading.value = true
 
+      const payload = {
+        name: title.value,
+        description: description.value,
+        img: image.value,
+      }
+
       //TODO: if online, validate and sync
+      const group = await useFetch.fetch('/groups/create', 'post', payload, true, true, true)
 
-      const friend = await useFetch.post('/friends/add', { friend_code: code.value }, true)
+      useGroup.groups.push(group)
+      useGroup.update()
 
-      useUser.friends.requests.sent.push(friend)
-      useUser.update()
-      loading.value = false
-      router.push('/social/friends')
-    } catch {
-      loading.value = false
-    }
+      router.push(`/social/grous/${group.id}`)
+    } catch {}
+    loading.value = false
   }
 }
 </script>
 
 <template>
-  <IonPage>
-    <ion-content :fullscreen="true">
-      <section class="form">
-        <form ref="form" @submit.prevent novalidate>
-          <h2>Making a new group</h2>
-          <CleanInput
-            :error="titleError"
-            v-model="title"
-            label="Group title"
-            placeholder="What is the groups name?"
-          />
+  <section class="form">
+    <form ref="form" @submit.prevent novalidate>
+      <h2>Make a new group</h2>
 
-          <IonButton @click="submit()">
-            <p v-if="!loading">Add Friend</p>
-            <IonSpinner v-else name="circles" />
-          </IonButton>
+      <q-input
+        :error="submitted && nameError != ''"
+        :error-message="nameError"
+        v-model="title"
+        filled
+        label="Group name"
+        placeholder="What is the name of your group"
+      />
 
-          <FormSplitter text="OR" />
+      <q-input v-model="description" filled type="textarea" label="Description" placeholder="What is this group about">
+        <template v-slot:label>
+          Give some more details
+          <span class="text-primary">(optional*)</span>
+        </template>
+      </q-input>
 
-          <IonButton class="upload" @click="null">
-            <ion-icon aria-hidden="true" :icon="camera" />
-            Scan QR code
-          </IonButton>
-        </form>
-      </section>
-    </ion-content>
-  </IonPage>
+      <q-file filled bottom-slots v-model="image" label counter>
+        <template v-slot:prepend>
+          <q-icon name="image" @click.stop.prevent />
+        </template>
+        <template v-slot:append>
+          <q-icon name="close" @click.stop.prevent="image = null" class="cursor-pointer" />
+        </template>
+        <template v-slot:label>
+          Group picture
+          <span class="text-primary">(optional*)</span>
+        </template>
+      </q-file>
+
+      <q-btn size="large" color="primary" @click="submit()">
+        <p v-if="!loading">Make group</p>
+        <q-spinner-tail v-else color="white" />
+      </q-btn>
+    </form>
+  </section>
 </template>
 
 <style scoped lang="scss">
@@ -83,6 +97,10 @@ const submit = async () => {
   display: flex;
   height: 100%;
   --background: var(--main);
+}
+
+button {
+  width: 100%;
 }
 
 form {

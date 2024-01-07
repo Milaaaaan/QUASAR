@@ -257,7 +257,7 @@ const handleForm = async () => {
           </q-step>
 
           <!-- STEP 3-->
-          <q-step :name="3" title="3" icon="add_comment" :done="done3">
+          <q-step :name="3" title="3" icon="person" :done="done3">
             <q-stepper-navigation>
               <q-btn @click="handleForm" color="primary" label="Save" />
             </q-stepper-navigation>

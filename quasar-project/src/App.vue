@@ -1,5 +1,17 @@
 <script setup>
 import 'src/css/form.scss'
+
+
+/*
+  ! add group
+  ! add group members
+  ! make receipts
+  
+
+
+
+
+*/
 </script>
 
 <template>
