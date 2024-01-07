@@ -4,14 +4,17 @@ import ProfilePicture from './ProfilePicture.vue'
 import helper from 'src/composables/helper'
 import QrcodeVue from 'qrcode.vue'
 import { useUserStore } from 'src/stores/user'
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useFetchStore } from 'src/stores/fetchData'
+import { useReceiptStore } from 'src/stores/receipts'
 
 const usePopUp = usePopUpStore()
 const useFetch = useFetchStore()
 const useUser = useUserStore()
 const $q = useQuasar()
+const amount = ref(0)
+const title = ref('')
 
 watch(usePopUp, () => {
   if (usePopUp.open) {
@@ -51,6 +54,31 @@ const removeFriend = async () => {
   }
   useUser.update()
 }
+
+const openPay = () => {
+  amount.value = Math.abs(details.value.user1_debt)
+  title.value = `lift debt`
+  usePopUp.type = 'pay'
+}
+
+const cancel = () => {
+  usePopUp.type = 'friend'
+}
+
+const payBack = async () => {
+  const payload = {
+    amount: amount.value,
+    title: title.value,
+  }
+  await useFetch.fetch(`/transactions/user/${details.value.id}`, 'post', payload, true, true, false)
+  await useReceiptStore().sync()
+  usePopUp.open = false
+}
+
+const validate = () => {
+  if (amount.value > Math.abs(details.value.user1_debt)) amount.value = Math.abs(details.value.user1_debt)
+  else if (amount.value < 0) amount.value = 0.01
+}
 </script>
 
 <template>
@@ -87,7 +115,42 @@ const removeFriend = async () => {
           >Add as friend</q-btn
         >
         <q-btn v-if="details.friend" color="negative" icon="person" @click="removeFriend">Remove friend</q-btn>
-        <q-btn v-if="details.user1_debt < 0" color="primary" icon="attach_money">Repay dept</q-btn>
+        <q-btn v-if="details.user1_debt < 0" color="primary" icon="attach_money" @click="openPay">Repay dept</q-btn>
+      </div>
+    </q-card-section>
+
+    <q-card-section v-else-if="usePopUp.type == 'pay'" class="pop-up">
+      <ProfilePicture :pic="details.profile_picture" />
+      <h3>Pay {{ details.name }} back</h3>
+
+      <q-slider
+        v-model="amount"
+        :min="0.5"
+        :max="Math.abs(details.user1_debt)"
+        :label-value="helper.formatPrice(amount)"
+        :step="0.5"
+        label-always
+        color="primary"
+      />
+
+      <q-input
+        v-model.numer="amount"
+        @update:model-value="validate"
+        filled
+        type="number"
+        label="Transfer amount"
+        placeholder="amount to transfer to person"
+      />
+
+      <q-input v-model.numer="title" filled label="title" placeholder="transaction title" />
+
+      <i class="small"
+        >Money is not really being transfered, you will still need to do this, his just keeps track of the money flow</i
+      >
+
+      <div class="buttons">
+        <q-btn @click="cancel" color="negative">Cancel</q-btn>
+        <q-btn @click="payBack" color="positive">Transfer</q-btn>
       </div>
     </q-card-section>
 
@@ -108,6 +171,15 @@ const removeFriend = async () => {
     margin: 0.5rem 0;
     color: var(--ion-text-color);
   }
+}
+
+.q-slider {
+  margin-top: 1rem;
+}
+
+.small {
+  font-size: xx-small;
+  line-height: xx-small;
 }
 
 .buttons {
