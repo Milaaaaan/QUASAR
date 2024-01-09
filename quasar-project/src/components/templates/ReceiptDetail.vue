@@ -1,5 +1,4 @@
 <script setup>
-import ContributorsList from 'src/components/molecules/ContributorsList.vue'
 import helper from 'src/composables/helper'
 import { useReceiptStore } from 'src/stores/receipts'
 import { useUserStore } from 'src/stores/user'
@@ -18,7 +17,7 @@ const columns = [
 ]
 
 const receipt = computed(() => {
-  if (route.params.index) return useReceipt.receipts[route.params.index]
+  if (route.params.index) return useReceipt.receipts.find((x) => x.id == route.params.index)
   return null
 })
 
@@ -36,9 +35,9 @@ const creator = computed(() => {
 </script>
 
 <template>
-  <section v-if="receipt" :class="'receipt ' + useReceipt.category[receipt.category - 1].type">
+  <section v-if="receipt" :class="'receipt ' + useReceipt.category[receipt.category].type">
     <div class="part">
-      <q-icon color="light" size="xx-large" :name="useReceipt.category[receipt.category - 1].icon" />
+      <q-icon color="light" size="xx-large" :name="useReceipt.category[receipt.category].icon" />
       <h2>{{ receipt.title }}</h2>
       <h3>{{ receipt.type }}</h3>
       <p>{{ receipt.description }}</p>
@@ -48,7 +47,6 @@ const creator = computed(() => {
         <b>{{ creator.name }}</b>
       </p>
     </div>
-    {{ receipt }}
     <span v-if="receipt.items" class="splicer"></span>
 
     <div v-if="receipt.items">

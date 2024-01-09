@@ -32,8 +32,6 @@ onMounted(async () => {
   <section v-if="details">
     <h2>{{ details.name }}</h2>
     <i>{{ details.description }}</i>
-    {{ details }}
-    <q-parallax :src="details.img" />
 
     <div class="buttons">
       <q-btn color="primary" to="/create/bill">

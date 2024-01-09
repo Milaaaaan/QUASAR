@@ -14,7 +14,7 @@ defineProps({
   <q-header id="header" :class="minimalize ? 'minimalize' : ''">
     <q-toolbar class="toolbar">
       <div class="toolie">
-        <ion-back-button v-if="$route.path != '/'" defaultHref="/"></ion-back-button>
+        <q-btn @click="$router.back" flat rounded icon="arrow_back_ios_new" class="back-btn" v-if="$route.path != '/'" />
         <h1>{{ $route.name }}</h1>
         <div class="image">
           <img src="/src/assets/logo.svg" alt="" />
@@ -25,6 +25,12 @@ defineProps({
 </template>
 
 <style scoped lang="scss">
+.back-btn {
+  left: 1rem;
+  position: absolute;
+  top: 1.3rem;
+  padding: 0.5rem;
+}
 .minimalize {
   & .toolbar {
     height: 5rem;
@@ -54,6 +60,10 @@ header {
   z-index: 5;
   background-color: $background;
   color: $text;
+
+  nav {
+    backdrop-filter: blur(3px);
+  }
 }
 
 h1 {
@@ -73,8 +83,6 @@ h1 {
 .toolbar {
   display: flex;
   height: 11rem;
-  --background: none;
-  --background: var(--ion-background-color);
   z-index: 1;
   align-items: flex-start;
   transition: height 0.5s ease-in-out;

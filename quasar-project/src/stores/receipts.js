@@ -5,6 +5,7 @@ import { ref } from 'vue'
 
 export const useReceiptStore = defineStore('receiptsStore', () => {
   const receipts = ref([])
+  const transactions = ref([])
 
   const category = [
     { id: 0, icon: 'local_drink', label: 'Drinks', type: 'Food' },
@@ -45,9 +46,10 @@ export const useReceiptStore = defineStore('receiptsStore', () => {
   ]
 
   const init = async () => {
-    if (localStorage.getItem('receipts')) {
-      receipts.value = JSON.parse(localStorage.getItem('receipts'))
-    }
+    console.log('init')
+    console.log(localStorage.getItem('receipts'))
+    if (localStorage.getItem('receipts')) receipts.value = JSON.parse(localStorage.getItem('receipts'))
+    if (localStorage.getItem('transactions')) transactions.value = JSON.parse(localStorage.getItem('transactions'))
   }
 
   const get = async () => {
@@ -55,13 +57,20 @@ export const useReceiptStore = defineStore('receiptsStore', () => {
   }
 
   const sync = async () => {
-    receipts.value = await syncing.syncData(receipts.value, '/receipts/update', '/receipts')
+    let [A, B] = await Promise.all([
+      syncing.syncData(receipts.value, '/receipts/update', '/receipts'),
+      syncing.syncData(transactions.value, '/transactions/update', '/transactions'),
+    ])
+
+    receipts.value = A
+    transactions.value = B
     await update()
   }
 
   init()
 
   const update = async () => {
+    localStorage.setItem('transactions', JSON.stringify(transactions.value))
     localStorage.setItem('receipts', JSON.stringify(receipts.value))
   }
 
@@ -71,6 +80,7 @@ export const useReceiptStore = defineStore('receiptsStore', () => {
 
   return {
     receipts,
+    transactions,
     category,
     clear,
     get,

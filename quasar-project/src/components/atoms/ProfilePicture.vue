@@ -48,6 +48,11 @@ img {
   border-radius: 50%;
   object-fit: cover;
 
+  &.x-small {
+    width: 2rem;
+    height: 2rem;
+  }
+
   &.small {
     width: 3rem;
     height: 3rem;

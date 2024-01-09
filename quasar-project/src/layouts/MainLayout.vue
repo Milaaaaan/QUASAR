@@ -18,7 +18,7 @@ watch(useFetch, async () => {
     if (error) {
       quasar.notify({
         message: error.message,
-        color:  error.type,
+        color: error.type,
         position: 'top',
         icon: 'report_problem',
       })

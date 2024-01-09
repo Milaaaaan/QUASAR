@@ -131,141 +131,137 @@ const handleForm = async () => {
 </script>
 
 <template>
-  <IonPage>
-    <IonContent :fullscreen="true">
-      <section>
-        <q-stepper v-model="step" header-nav ref="stepper" color="primary" animated alternative-labels>
-          <q-step :name="1" title="Basics" icon="settings" :done="done1">
-            <q-input
-              v-model="name"
-              label="Receipt Title"
-              filled
-              placeholder="Give this receipt a name"
-              :error-message="nameError"
-              :error="submitted && nameError != ''"
-            />
-            <q-select filled v-model="category" :options="useReceipt.category" label="Category">
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section avatar>
-                    <q-icon :name="scope.opt.icon" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.type }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+  <section>
+    <q-stepper v-model="step" header-nav ref="stepper" color="primary" animated alternative-labels>
+      <q-step :name="1" title="Basics" icon="settings" :done="done1">
+        <q-input
+          v-model="name"
+          label="Receipt Title"
+          filled
+          placeholder="Give this receipt a name"
+          :error-message="nameError"
+          :error="submitted && nameError != ''"
+        />
+        <q-select filled v-model="category" :options="useReceipt.category" label="Category">
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section avatar>
+                <q-icon :name="scope.opt.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ scope.opt.label }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.type }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
 
-            <q-select filled v-model="type" :options="types" label="Type" />
+        <q-select filled v-model="type" :options="types" label="Type" />
 
-            <div class="buttons">
-              <q-chip square color="primary" text-color="white" icon="event">
-                {{ when }}
-                <q-popup-proxy @before-show="updateProxy">
-                  <q-date v-model="when" mask="YYYY-MM-DD HH:mm">
-                    <div class="row items-center justify-end q-gutter-sm">
-                      <q-btn label="Cancel" color="primary" flat v-close-popup />
-                      <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-chip>
+        <div class="buttons">
+          <q-chip square color="primary" text-color="white" icon="event">
+            {{ when }}
+            <q-popup-proxy @before-show="updateProxy">
+              <q-date v-model="when" mask="YYYY-MM-DD HH:mm">
+                <div class="row items-center justify-end q-gutter-sm">
+                  <q-btn label="Cancel" color="primary" flat v-close-popup />
+                  <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-chip>
 
-              <q-chip square color="primary" text-color="white" icon="schedule">
-                <q-popup-proxy @before-show="updateProxy">
-                  <q-time v-model="when" mask="YYYY-MM-DD HH:mm">
-                    <div class="row items-center justify-end q-gutter-sm">
-                      <q-btn label="Cancel" color="primary" flat v-close-popup />
-                      <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
-                    </div>
-                  </q-time>
-                </q-popup-proxy>
-                Time
-              </q-chip>
-            </div>
+          <q-chip square color="primary" text-color="white" icon="schedule">
+            <q-popup-proxy @before-show="updateProxy">
+              <q-time v-model="when" mask="YYYY-MM-DD HH:mm">
+                <div class="row items-center justify-end q-gutter-sm">
+                  <q-btn label="Cancel" color="primary" flat v-close-popup />
+                  <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                </div>
+              </q-time>
+            </q-popup-proxy>
+            Time
+          </q-chip>
+        </div>
 
-            <q-table v-if="withArtikles" :rows="artikles" :columns="columns" title="Items" row-key="name">
-              <template v-slot:body="props">
-                <q-tr :props="props">
-                  <q-td key="name" :props="props">
-                    {{ props.row.name }}
-                    <q-popup-edit v-model="props.row.name" title="Edit Name" auto-save v-slot="scope">
-                      <q-input v-model="scope.value" dense autofocus @keyup.enter="scope.set" />
-                    </q-popup-edit>
-                  </q-td>
-                  <q-td key="amount" :props="props">
-                    {{ props.row.amount }}
-                    <q-popup-edit title="Edit amount" v-model.number="props.row.amount" auto-save v-slot="scope">
-                      <q-input type="number" v-model.number="scope.value" dense autofocus @keyup.enter="scope.set" />
-                    </q-popup-edit>
-                  </q-td>
-                  <q-td key="price" :props="props">
-                    {{ props.row.price }}
-                    <q-popup-edit title="Edit price" v-model="props.row.price" auto-save v-slot="scope">
-                      <q-input type="number" v-model.number="scope.value" dense autofocus @keyup.enter="scope.set" />
-                    </q-popup-edit>
-                  </q-td>
-                  <q-td key="total" :props="props">
-                    {{ props.row.amount * props.row.price }}
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
+        <q-table v-if="withArtikles" :rows="artikles" :columns="columns" title="Items" row-key="name">
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td key="name" :props="props">
+                {{ props.row.name }}
+                <q-popup-edit v-model="props.row.name" title="Edit Name" auto-save v-slot="scope">
+                  <q-input v-model="scope.value" dense autofocus @keyup.enter="scope.set" />
+                </q-popup-edit>
+              </q-td>
+              <q-td key="amount" :props="props">
+                {{ props.row.amount }}
+                <q-popup-edit title="Edit amount" v-model.number="props.row.amount" auto-save v-slot="scope">
+                  <q-input type="number" v-model.number="scope.value" dense autofocus @keyup.enter="scope.set" />
+                </q-popup-edit>
+              </q-td>
+              <q-td key="price" :props="props">
+                {{ props.row.price }}
+                <q-popup-edit title="Edit price" v-model="props.row.price" auto-save v-slot="scope">
+                  <q-input type="number" v-model.number="scope.value" dense autofocus @keyup.enter="scope.set" />
+                </q-popup-edit>
+              </q-td>
+              <q-td key="total" :props="props">
+                {{ props.row.amount * props.row.price }}
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
 
-            <q-input
-              v-model="total"
-              label="Total cost"
-              :disable="withArtikles"
-              filled
-              square
-              type="number"
-              placeholder="The amount of total money spent"
-              :error-message="totalError"
-              :error="submitted && totalError != ''"
-            />
+        <q-input
+          v-model="total"
+          label="Total cost"
+          :disable="withArtikles"
+          filled
+          square
+          type="number"
+          placeholder="The amount of total money spent"
+          :error-message="totalError"
+          :error="submitted && totalError != ''"
+        />
 
-            <q-checkbox v-model="withArtikles" label="With items" />
+        <q-checkbox v-model="withArtikles" label="With items" />
 
-            <q-stepper-navigation>
-              <q-btn @click="handleForm" color="primary" label="Continue" />
-            </q-stepper-navigation>
-          </q-step>
+        <q-stepper-navigation>
+          <q-btn @click="handleForm" color="primary" label="Continue" />
+        </q-stepper-navigation>
+      </q-step>
 
-          <!-- STEP 2-->
-          <q-step :name="2" title="Details" caption="Optional" icon="create_new_folder" :done="done2">
-            <q-uploader
-              url="http://localhost:4444/upload"
-              label="Upload a image"
-              multiple
-              accept=".jpg, image/*"
-              @rejected="onRejected"
-            />
+      <!-- STEP 2-->
+      <q-step :name="2" title="Details" caption="Optional" icon="create_new_folder" :done="done2">
+        <q-uploader
+          url="http://localhost:4444/upload"
+          label="Upload a image"
+          multiple
+          accept=".jpg, image/*"
+          @rejected="onRejected"
+        />
 
-            <q-input v-model="text" label="Note" type="textarea" filled>
-              <template v-slot:label>
-                Give some more details
-                <span class="text-primary">(optional*)</span>
-              </template>
-            </q-input>
+        <q-input v-model="text" label="Note" type="textarea" filled>
+          <template v-slot:label>
+            Give some more details
+            <span class="text-primary">(optional*)</span>
+          </template>
+        </q-input>
 
-            <q-stepper-navigation>
-              <q-btn @click="handleForm" color="primary" label="Continue" />
-              <q-btn @click="step--" color="negative" label="Back" />
-            </q-stepper-navigation>
-          </q-step>
+        <q-stepper-navigation>
+          <q-btn @click="handleForm" color="primary" label="Continue" />
+          <q-btn @click="step--" color="negative" label="Back" />
+        </q-stepper-navigation>
+      </q-step>
 
-          <!-- STEP 3-->
-          <q-step :name="3" title="3" icon="person" :done="done3">
-            <q-stepper-navigation>
-              <q-btn @click="handleForm" color="primary" label="Save" />
-            </q-stepper-navigation>
-          </q-step>
-        </q-stepper>
-      </section>
-    </IonContent>
-  </IonPage>
+      <!-- STEP 3-->
+      <q-step :name="3" title="3" icon="person" :done="done3">
+        <q-stepper-navigation>
+          <q-btn @click="handleForm" color="primary" label="Save" />
+        </q-stepper-navigation>
+      </q-step>
+    </q-stepper>
+  </section>
 </template>
 
 <style scoped lang="scss">

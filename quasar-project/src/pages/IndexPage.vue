@@ -15,8 +15,6 @@ const owed = computed(() => {
   const receipts = useReceipt.receipts // Add type annotation
   const userId = useUser.user.id // Add type annotation
 
-  console.log(receipts)
-
   receipts.forEach((receipt) => {
     // Add type annotation
 
@@ -115,7 +113,7 @@ const data = computed(() => {
 <template>
   <q-page>
     <section v-if="owed.userOwes && useReceipt.category">
-      <Pie :data="data" :options="options" />
+      <Pie :data="data" />
       {{ data }}
     </section>
   </q-page>

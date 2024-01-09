@@ -29,21 +29,31 @@ const props = defineProps({
 const contributors = computed(() => {
   return helper.getContribrutors(props.value, useUser.user, useUser.friends)
 })
+
+const transactor = (value) => {
+  const user2 =
+    value.user2_id !== useUser.user.id ? useUser.friends.find((friend) => friend.id === value.user2_id) : useUser.user
+  const user1 =
+    value.user1_id !== useUser.user.id ? useUser.friends.find((friend) => friend.id === value.user1_id) : useUser.user
+  if (value.user1_id === useUser.user.id) return `Paid ${user2.name}`
+  else return `Received from ${user1.name}`
+}
 </script>
 
 <template>
-  <router-link :to="{ name: 'Receipt details', params: { index: index } }" class="card">
+  <router-link :to="{ name: 'Receipt details', params: { index: value.id } }" class="card">
     <div class="info">
       <div>
         <h3>{{ value.title }}</h3>
         <div class="type">
-          <p>{{ value.type }}</p>
+          <p v-if="value.type">{{ value.type }}</p>
           <p v-if="contributors.length > 2">| {{ contributors.length }} Persons</p>
           <p class="name" v-if="contributors.length == 2">| {{ contributors[1].name }} Persons</p>
+          <p v-if="value.isTransaction">{{ transactor(value) }}</p>
         </div>
       </div>
       <div>
-        <h4>€{{ value.total }}</h4>
+        <h4>€{{ value.total ? value.total : value.amount }}</h4>
       </div>
     </div>
   </router-link>

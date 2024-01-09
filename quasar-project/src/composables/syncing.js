@@ -6,6 +6,10 @@ const syncData = async (array, update_url, get_url) => {
   const useConnection = useConnectionStore()
   const ids = array.map((x) => x.id)
   const unsyncedArray = array.filter((x) => x.synced == false)
+  const payload = {
+    lastPull: useConnection.lastSync,
+    existingIds: ids,
+  }
 
   if (unsyncedArray.length > 0)
     try {
@@ -13,10 +17,7 @@ const syncData = async (array, update_url, get_url) => {
       array.forEach((x) => (x.synced = true))
     } catch (err) {}
 
-  const data = await useFetch.fetch(get_url, 'post', {
-    lastPull: useConnection.lastSync,
-    existingIds: ids,
-  })
+  const data = await useFetch.fetch(get_url, 'post', payload)
 
   data.removed_data.forEach((element) => {
     array = array.filter((x) => x.id != element)

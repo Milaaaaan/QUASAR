@@ -6,9 +6,11 @@ import ProfilePicture from 'src/components/atoms/ProfilePicture.vue'
 import NotificationsCard from 'src/components/molecules/NotificationCard.vue'
 import { ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
+import { useConnectionStore } from 'src/stores/connection'
 
 const useUser = useUserStore()
 const usePopUp = usePopUpStore()
+const useConnection = useConnectionStore()
 const notify = ref(false)
 const quasar = useQuasar()
 const vibrations = ref(false)
@@ -40,6 +42,8 @@ const showQr = () => {
       </div>
       <hr />
       <NotificationsCard :notifies="useUser.notifications" />
+
+      <q-btn color="primary" icon="check" label="OK" @click="useConnection.reload()" />
 
       <q-list padding separator>
         <q-item-label header>Settings</q-item-label>
@@ -116,6 +120,10 @@ const showQr = () => {
   margin: 0;
   padding: 0;
   width: 100%;
+}
+
+.body--dark #q-app section {
+  background-color: $step-850;
 }
 
 .column {

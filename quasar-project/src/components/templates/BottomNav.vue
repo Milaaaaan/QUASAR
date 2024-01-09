@@ -3,9 +3,12 @@ import { Keyboard } from '@capacitor/keyboard'
 import { Capacitor } from '@capacitor/core'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useUserStore } from 'src/stores/user'
+import ProfilePicture from '../atoms/ProfilePicture.vue'
 
 const route = useRoute()
 const isOpen = ref(false)
+const useUser = useUserStore()
 
 Capacitor.getPlatform()
 
@@ -29,7 +32,8 @@ const isRouteActive = (routePattern) => {
 <template>
   <nav v-if="!isOpen && $route.name != 'Login' && $route.name != 'Register'">
     <RouterLink to="/" :class="{ active: $route.path == '/' }" router-direction="forward">
-      <q-icon size="2rem" name="home" />
+      <q-icon size="1.5rem" name="home" />
+      <p class="nav-text">Home</p>
     </RouterLink>
 
     <RouterLink
@@ -38,7 +42,8 @@ const isRouteActive = (routePattern) => {
       :class="{ active: isRouteActive('/social') }"
       router-direction="forward"
     >
-      <q-icon size="2rem" name="people" />
+      <q-icon size="1.5rem" name="people" />
+      <p class="nav-text">Social</p>
     </RouterLink>
 
     <div class="action-btn">
@@ -53,17 +58,22 @@ const isRouteActive = (routePattern) => {
       :class="{ active: isRouteActive('/activity') }"
       router-direction="forward"
     >
-      <q-icon size="2rem" name="book" />
+      <q-icon size="1.5rem" name="receipt_long" />
+      <p class="nav-text">Acitivity</p>
     </RouterLink>
 
     <RouterLink to="/account" :class="{ active: isRouteActive('/account') }" router-direction="forward">
-      <q-icon size="2rem" name="person" />
+      <ProfilePicture size="x-small" :pic="useUser.user.profile_picture" />
     </RouterLink>
   </nav>
 </template>
 
 <style scoped lang="scss">
+.nav-text {
+  line-height: 0.8rem;
+}
 nav {
+  backdrop-filter: blur(6px);
   z-index: 99;
   position: fixed;
   width: 100%;
@@ -74,15 +84,18 @@ nav {
 
   & a {
     text-decoration: none;
-    padding: 0.5rem 0.5rem 0;
+    padding: 0.5rem;
     display: flex;
     margin: 0;
     position: relative;
     color: $text;
     background: none;
     background: $card;
-    width: 4rem;
-    justify-content: center;
+    width: 100%;
+    max-width: 5rem;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
 
     &::after {
       content: '';
@@ -126,23 +139,23 @@ nav {
 
 nav .action-btn {
   width: 4rem;
-  height: 3rem;
+  height: 3.4rem;
   display: flex;
   position: relative;
   background: rgba(127, 255, 212, 0) url('/src/assets/tab.svg') bottom center/contain no-repeat;
   justify-content: center;
 
   & a {
+    margin: 1rem;
     display: block;
     height: 3rem;
     width: 3rem;
     border: none;
     border-radius: 50%;
-    border-radius: 50%;
     background: $primary;
     color: $light;
     position: relative;
-    top: -0.8rem;
+    top: -1.5rem;
 
     &::after {
       display: none;
@@ -157,6 +170,6 @@ nav .action-btn {
 }
 
 body.dark nav {
-  filter: drop-shadow(0px 0px 2px var(ion-color-step-100));
+  filter: drop-shadow(0px 0px 1px var(ion-color-step-100));
 }
 </style>

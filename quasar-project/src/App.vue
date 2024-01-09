@@ -1,6 +1,8 @@
 <script setup>
 import 'src/css/form.scss'
+import { useConnectionStore } from 'src/stores/connection'
 
+const useConnection = useConnectionStore()
 
 /*
   ! add group

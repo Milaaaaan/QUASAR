@@ -37,16 +37,16 @@ i {
 
 .you::after {
   animation-delay: 3s;
-  background: linear-gradient(27deg, rgba(1, 193, 27, 1) 0%, rgba(2, 217, 137, 1) 100%);
+  background: linear-gradient(27deg, rgb(1, 123, 17) 0%, rgba(2, 217, 137, 1) 100%);
 }
 
 .friend::after {
   animation-delay: 8s;
-  background: linear-gradient(27deg, rgba(59, 36, 255, 1) 0%, rgba(63, 199, 251, 1) 100%);
+  background: linear-gradient(27deg, rgb(11, 0, 108) 0%, rgba(63, 199, 251, 1) 100%);
 }
 
 .group::after {
-  background: linear-gradient(27deg, rgba(251, 63, 117, 1) 0%, rgba(255, 99, 70, 1) 100%);
+  background: linear-gradient(27deg, rgb(136, 0, 39) 0%, rgba(255, 99, 70, 1) 100%);
 }
 
 @keyframes changeRadius {

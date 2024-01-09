@@ -82,7 +82,7 @@ const validate = () => {
 </script>
 
 <template>
-  <q-dialog v-model="usePopUp.open" class="dialog">
+  <q-dialog full-width v-model="usePopUp.open" class="dialog">
     <q-card-section v-if="usePopUp.type == 'QR'" class="QR pop-up">
       <i><b>Code: </b>{{ details.qr }}</i>
       <qrcode-vue
@@ -101,12 +101,8 @@ const validate = () => {
         <q-item clickable v-ripple v-if="details.friend">
           <q-item-section side>Friends since: {{ helper.cleanEU(details.created_at) }}</q-item-section>
         </q-item>
-
         <q-item clickable v-ripple>
           <q-item-section side>{{ owed() }}</q-item-section>
-        </q-item>
-        <q-item clickable v-ripple>
-          <q-item-section side>Friends since: {{ helper.cleanEU(details.created_at) }}</q-item-section>
         </q-item>
       </q-list>
 
@@ -144,9 +140,9 @@ const validate = () => {
 
       <q-input v-model.numer="title" filled label="title" placeholder="transaction title" />
 
-      <i class="small"
-        >Money is not really being transfered, you will still need to do this, his just keeps track of the money flow</i
-      >
+      <i class="small">
+        Money is not really being transfered, you will still need to do this, this just keeps track of the money flow
+      </i>
 
       <div class="buttons">
         <q-btn @click="cancel" color="negative">Cancel</q-btn>
@@ -186,6 +182,10 @@ const validate = () => {
   display: flex;
   gap: 1rem;
   flex-direction: column;
+}
+
+.q-slider {
+  width: calc(100% - 1rem);
 }
 
 .pop-up {

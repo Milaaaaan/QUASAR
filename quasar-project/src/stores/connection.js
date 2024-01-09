@@ -19,7 +19,6 @@ export const useConnectionStore = defineStore('connectionStore', () => {
     isConnected.value = status.connected
     type.value = status.type
     console.log('Network status changed', isConnected.value)
-    await reload()
   })
 
   const reload = async (event = null) => {
@@ -30,10 +29,11 @@ export const useConnectionStore = defineStore('connectionStore', () => {
         lastSync.value = date
         localStorage.setItem('lastSync', JSON.stringify(date))
       }
-    } else useFetch.responses.push({
-      message: 'You went offline',
-      type: 'negative',
-    })
+    } else
+      useFetch.responses.push({
+        message: 'You went offline',
+        type: 'negative',
+      })
     event.target.complete()
     return null
   }
@@ -48,6 +48,7 @@ export const useConnectionStore = defineStore('connectionStore', () => {
     const data = await Network.getStatus()
     type.value = data.connectionType
     isConnected.value = data.connected
+    if (isConnected.value) await reload()
   }
 
   init()
