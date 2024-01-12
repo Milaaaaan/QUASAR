@@ -26,7 +26,7 @@ main {
 }
 
 .q-page-container {
-  padding: 1rem 0rem 4rem 0rem;
+  padding: 1rem 0rem 8rem 0rem;
   overflow: hidden;
   background-color: $background;
 }

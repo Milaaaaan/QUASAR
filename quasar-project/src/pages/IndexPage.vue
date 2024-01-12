@@ -4,7 +4,9 @@ import { useUserStore } from 'src/stores/user'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import { computed } from 'vue'
 import { Pie } from 'vue-chartjs'
+import { useQuasar } from 'quasar'
 
+const $q = useQuasar()
 const useReceipt = useReceiptStore()
 const useUser = useUserStore()
 
@@ -108,13 +110,24 @@ const data = computed(() => {
     ],
   }
 })
+
+const options = computed(() => {
+  return {
+    plugins: {
+      legend: {
+        labels: {
+          color: $q.dark.isActive ? 'white' : 'black', // Change this to the color you want
+        },
+      },
+    },
+  }
+})
 </script>
 
 <template>
   <q-page>
     <section v-if="owed.userOwes && useReceipt.category">
-      <Pie :data="data" />
-      {{ data }}
+      <Pie :data="data" :options="options" />
     </section>
   </q-page>
 </template>

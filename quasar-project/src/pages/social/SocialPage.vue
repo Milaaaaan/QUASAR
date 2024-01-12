@@ -2,11 +2,9 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-const router= useRouter()
+const router = useRouter()
 const route = useRoute()
 const tab = ref(route.path.startsWith('/social/groups') ? 'Groups' : 'Friends')
-
-
 </script>
 
 <template>
@@ -30,8 +28,16 @@ const tab = ref(route.path.startsWith('/social/groups') ? 'Groups' : 'Friends')
 </template>
 
 <style scoped lang="scss">
-.q-tab-panels {
-  background: none;
+.q-tab--inactive {
+  color: $text;
+}
+
+.body--dark .q-tab--inactive {
+  color: $white;
+}
+
+main {
+  min-height: initial !important;
 }
 
 .q-panel > div {

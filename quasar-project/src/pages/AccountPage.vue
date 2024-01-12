@@ -11,9 +11,10 @@ import { useConnectionStore } from 'src/stores/connection'
 const useUser = useUserStore()
 const usePopUp = usePopUpStore()
 const useConnection = useConnectionStore()
-const notify = ref(false)
 const quasar = useQuasar()
-const vibrations = ref(false)
+
+const notify = ref(useUser.settings.notifications)
+const vibrations = ref(useUser.settings.vibrations)
 const darkmode = ref(quasar.dark.isActive)
 
 const logout = async () => {
@@ -23,6 +24,18 @@ const logout = async () => {
 const changeTheme = (change = true) => {
   useUser.toggleChange()
   if (change) darkmode.value = !darkmode.value
+}
+
+const changeNotifies = (change = true) => {
+  useUser.settings.notifications = !useUser.settings.notifications
+  if (change) notify.value = !notify.value
+  useUser.update()
+}
+
+const ChangeVibrations = (change = true) => {
+  useUser.settings.vibrations = !useUser.settings.vibrations
+  if (change) vibrations.value = !vibrations.value
+  useUser.update()
 }
 
 const showQr = () => {
@@ -71,11 +84,11 @@ const showQr = () => {
           </q-item-section>
 
           <q-item-section side>
-            <q-toggle @click="changeTheme(false)" v-model="darkmode" val="friend" />
+            <q-toggle @click="changeTheme(false)" v-model="darkmode"  />
           </q-item-section>
         </q-item>
 
-        <q-item v-ripple>
+        <q-item v-ripple clickable @click="changeNotifies">
           <q-item-section avatar>
             <q-icon :name="notify ? 'notifications' : 'notifications_off'" />
           </q-item-section>
@@ -83,11 +96,11 @@ const showQr = () => {
             <q-item-label>notification</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-toggle v-model="notify" val="friend" />
+            <q-toggle @click="changeNotifies(false)" v-model="notify" />
           </q-item-section>
         </q-item>
 
-        <q-item v-ripple>
+        <q-item v-ripple clickable  @click="ChangeVibrations">
           <q-item-section avatar>
             <q-icon :name="vibrations ? 'phonelink_ring' : 'smartphone'" />
           </q-item-section>
@@ -97,7 +110,7 @@ const showQr = () => {
           </q-item-section>
 
           <q-item-section side>
-            <q-toggle v-model="vibrations" val="picture" />
+            <q-toggle v-model="vibrations" @click="ChangeVibrations(false)" />
           </q-item-section>
         </q-item>
 

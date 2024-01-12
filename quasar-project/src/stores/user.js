@@ -15,7 +15,11 @@ export const useUserStore = defineStore('userStore', () => {
   const friends = ref([])
   const requests = ref([])
   const listener = ref(null)
-  const themeToggle = ref(false)
+  const settings = ref({
+    dark: null,
+    vibrations: true,
+    notifications: true,
+  })
   const token = ref(null)
 
   const pusher = new Pusher('e6108f2a8aeb9210e0f7', {
@@ -45,14 +49,14 @@ export const useUserStore = defineStore('userStore', () => {
   )
 
   const init = async () => {
-    const DARK = JSON.parse(localStorage.getItem('dark'))
+    const SETTINGS = JSON.parse(localStorage.getItem('settings'))
     const USER = JSON.parse(localStorage.getItem('user'))
     const TOKEN = JSON.parse(localStorage.getItem('token'))
     const FRIENDS = JSON.parse(localStorage.getItem('friends'))
     const REQUESTS = JSON.parse(localStorage.getItem('requests'))
     const NOTIFIES = JSON.parse(localStorage.getItem('notifies'))
 
-    themeToggle.value = DARK
+    if (SETTINGS) settings.value = SETTINGS
     if (NOTIFIES) notifications.value = NOTIFIES
     if (USER) user.value = USER
     if (FRIENDS) friends.value = FRIENDS
@@ -69,13 +73,15 @@ export const useUserStore = defineStore('userStore', () => {
     const rootElement = document.documentElement
     if (shouldAdd) rootElement.classList.add('dark')
     else rootElement.classList.remove('dark')
-    localStorage.setItem('dark', JSON.stringify(shouldAdd))
+
+    settings.value.dark = shouldAdd
+    localStorage.setItem('settings', JSON.stringify(settings.value))
   }
 
   const initializeDarkTheme = async (isDark) => {
     await init()
-    toggleDarkTheme(themeToggle.value != null ? themeToggle.value : isDark)
-    Dark.set(themeToggle.value != null ? themeToggle.value : isDark)
+    toggleDarkTheme(settings.value.dark != null ? settings.value.dark : isDark)
+    Dark.set(settings.value.dark != null ? settings.value.dark : isDark)
   }
 
   initializeDarkTheme(prefersDark.matches)
@@ -142,6 +148,7 @@ export const useUserStore = defineStore('userStore', () => {
     localStorage.setItem('user', JSON.stringify(user.value))
     localStorage.setItem('token', JSON.stringify(token.value))
     localStorage.setItem('friends', JSON.stringify(friends.value))
+    localStorage.setItem('settings', JSON.stringify(settings.value))
   }
 
   async function clear() {
@@ -155,7 +162,7 @@ export const useUserStore = defineStore('userStore', () => {
 
   return {
     user,
-    themeToggle,
+    settings,
     friends,
     requests,
     notifications,

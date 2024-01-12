@@ -64,6 +64,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 section {
   padding: 1rem;
+  background-color: $card;
 }
 
 .body--dark {
@@ -88,5 +89,9 @@ section {
   display: flex;
   flex-direction: row-reverse;
   gap: 1rem;
+}
+
+.body--dark section {
+  background-color: $step-800;
 }
 </style>

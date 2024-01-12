@@ -6,9 +6,12 @@ import 'src/css/form.scss'
 import { useQuasar } from 'quasar'
 import { watch } from 'vue'
 import { useFetchStore } from 'src/stores/fetchData'
+import { Haptics } from '@capacitor/haptics';
+import { useUserStore } from 'src/stores/user'
 
 const quasar = useQuasar()
 const useFetch = useFetchStore()
+const useUser = useUserStore()
 
 watch(useFetch, async () => {
   let error = ''
@@ -22,6 +25,7 @@ watch(useFetch, async () => {
         position: 'top',
         icon: 'report_problem',
       })
+      if (useUser.settings.vibrations) await Haptics.vibrate();
     }
   }
 })

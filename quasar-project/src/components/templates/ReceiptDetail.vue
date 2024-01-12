@@ -213,6 +213,11 @@ ul {
 }
 
 .body--dark {
+
+  section {
+    background-color: $step-800;
+  }
+
   span {
     border-top: dashed 0.5rem $step-950;
 

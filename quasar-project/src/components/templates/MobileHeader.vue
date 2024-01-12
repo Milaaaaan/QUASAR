@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 defineProps({
   name: {
     type: String,
@@ -8,13 +12,15 @@ defineProps({
     default: true,
   },
 })
+
+const canGoBack = computed(() => route.path != '/' && route.name != 'Login' && route.name != 'Register')
 </script>
 
 <template>
   <q-header id="header" :class="minimalize ? 'minimalize' : ''">
     <q-toolbar class="toolbar">
       <div class="toolie">
-        <q-btn @click="$router.back" flat rounded icon="arrow_back_ios_new" class="back-btn" v-if="$route.path != '/'" />
+        <q-btn v-if="canGoBack" @click="$router.back" flat rounded icon="arrow_back_ios_new" class="back-btn" />
         <h1>{{ $route.name }}</h1>
         <div class="image">
           <img src="/src/assets/logo.svg" alt="" />

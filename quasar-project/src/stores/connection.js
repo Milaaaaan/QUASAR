@@ -34,8 +34,7 @@ export const useConnectionStore = defineStore('connectionStore', () => {
         message: 'You went offline',
         type: 'negative',
       })
-    event.target.complete()
-    return null
+    if (event) event.target.complete()
   }
 
   const clear = async () => {
