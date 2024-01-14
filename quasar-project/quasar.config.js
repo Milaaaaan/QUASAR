@@ -22,6 +22,7 @@ module.exports = configure(function (/* ctx */) {
       warnings: true,
       errors: true
     },
+    
 
 
 
@@ -198,7 +199,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'quasar-project'
+        appId: 'bill-buddy-project'
       }
     },
 

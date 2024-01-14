@@ -1,5 +1,5 @@
 {
-  "appId": "org.capacitor.quasar.app",
+  "appId": "org.capacitor.billbudy.app",
   "appName": "BillBuddy",
   "webDir": "www",
   "server": {
