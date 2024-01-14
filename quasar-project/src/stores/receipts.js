@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useReceiptStore = defineStore('receiptsStore', () => {
-  const receipts = ref([])
+  const receipts = ref(null)
   const transactions = ref([])
 
   const category = [
@@ -73,7 +73,7 @@ export const useReceiptStore = defineStore('receiptsStore', () => {
   }
 
   async function clear() {
-    receipts.value = []
+    receipts.value = null
   }
 
   return {

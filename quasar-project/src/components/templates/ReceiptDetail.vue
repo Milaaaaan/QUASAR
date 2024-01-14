@@ -21,6 +21,7 @@ const columns = [
 ]
 
 const receipt = computed(() => {
+  console.log(route.params.index)
   if (route.params.index) return useReceipt.receipts.find((x) => x.id == route.params.index)
   return null
 })
@@ -47,9 +48,9 @@ onMounted(() => {
 
 <template>
   <q-intersection transition="flip-right" class="example-item"> </q-intersection>
-
+  {{ receipt }}
   <section v-if="receipt" :class="'receipt ' + useReceipt.category[receipt.category].type">
-    <q-intersection transition="fade" once class="part">
+    <div class="part">
       <q-icon color="light" size="xx-large" :name="useReceipt.category[receipt.category].icon" />
       <h2>{{ receipt.title }}</h2>
       <h3>{{ receipt.type }}</h3>
@@ -58,7 +59,7 @@ onMounted(() => {
         Created by
         <b>{{ creator.name }}</b>
       </p>
-    </q-intersection>
+    </div>
     <span v-if="receipt.items.length > 0" class="splicer"></span>
 
     <div v-if="receipt.items.length > 0">
@@ -67,7 +68,7 @@ onMounted(() => {
 
     <span v-if="contributors" class="splicer"></span>
 
-    <q-intersection transition="fade" once v-if="contributors">
+    <div v-if="contributors">
       <h3 class="pd">Contributors</h3>
       <q-list>
         <div v-for="(contributor, index) in contributors" :key="index">
@@ -88,25 +89,25 @@ onMounted(() => {
           <q-separator inset="item" />
         </div>
       </q-list>
-    </q-intersection>
+    </div>
 
     <span v-if="receipt.img_url" class="splicer"></span>
 
-    <q-intersection v-if="receipt.img_url" once>
+    <div v-if="receipt.img_url">
       <h3 class="pd">Picture</h3>
       <img :src="receipt.img_url" alt="" />
-    </q-intersection>
+    </div>
 
     <span v-if="receipt.lon" class="splicer"></span>
 
-    <q-intersection transition="fade" v-if="receipt.lon" once>
+    <div v-if="receipt.lon">
       <h3 class="pd">Location</h3>
       <TheMap :show="receipt.lon" />
 
       <p class="part">{{ receipt.location }}</p>
-    </q-intersection>
+    </div>
 
-    <i>{{ helper.cleanTime(receipt.created_at) }}</i>
+    <i>{{ helper.cleanTime(receipt.date) }}</i>
   </section>
 </template>
 

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import syncing from 'src/composables/syncing'
 
 export const useGroupStore = defineStore('groupStore', () => {
-  const groups = ref([])
+  const groups = ref(null)
 
   const init = () => {
     const GROUPS = JSON.parse(localStorage.getItem('groups'))
@@ -26,7 +26,7 @@ export const useGroupStore = defineStore('groupStore', () => {
   }
 
   function clear() {
-    groups.value = []
+    groups.value = null
   }
 
   return {

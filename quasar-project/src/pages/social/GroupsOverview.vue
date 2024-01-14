@@ -1,13 +1,19 @@
 <script setup>
 import { useGroupStore } from 'src/stores/groups'
 import GroupCard from 'src/components/molecules/GroupCard.vue'
+import { computed, onMounted } from 'vue'
 
 const useGroup = useGroupStore()
+const loading = computed(() => (useGroup.groups ? false : true))
+
+onMounted(() => {
+  if (useGroup.groups == null) useGroup.sync()
+})
 </script>
 
 <template>
   <q-page>
-    <section>
+    <section v-if="!loading">
       <div v-if="$route.name == 'Groups'" class="buttons">
         <q-btn :to="{ name: 'Create group' }" class="float" icon="add" label="Make group" color="primary" />
       </div>
@@ -18,6 +24,24 @@ const useGroup = useGroupStore()
       </q-list>
 
       <RouterView v-else></RouterView>
+    </section>
+    <section v-else>
+      <q-list v-if="$route.name == 'Groups'">
+        <q-item-label header> <q-skeleton type="text" width="150px" /> </q-item-label>
+
+        <q-item v-ripple clickable v-for="x in 10" :key="x">
+          <q-item-section avatar>
+            <q-skeleton type="QAvatar" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label lines="1"><q-skeleton type="text" width="150px" /></q-item-label>
+            <q-item-label lines="2"><q-skeleton type="text" width="2000px" /></q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator inset="item" />
+      </q-list>
     </section>
   </q-page>
 </template>

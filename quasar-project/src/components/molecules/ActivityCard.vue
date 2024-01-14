@@ -86,6 +86,13 @@ const transactor = (value) => {
   font-size: 0.8rem;
 }
 
+h3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 11rem;
+}
+
 .flex {
   display: flex;
   align-items: flex-start;

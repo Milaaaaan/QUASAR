@@ -56,7 +56,7 @@ const icon = (category) => {
         :icon="icon(item.category)"
         :color="color(item.category)"
       >
-        <template v-slot:subtitle> {{ helper.cleanTime(item.created_at) }} </template>
+        <template v-slot:subtitle> {{ helper.cleanTime(item.date) }} </template>
         <q-intersection transition="scale">
           <activity-card link="Group receipt detail" :index="index" :value="item" :id="item.id" />
         </q-intersection>

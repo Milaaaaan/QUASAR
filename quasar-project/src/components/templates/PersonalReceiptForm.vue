@@ -112,7 +112,9 @@ const submit = async () => {
     if (lat.value) formData.append('lat', lat.value)
 
     const receipt = helper.formDataToObject(formData)
-
+    receipt.id = useReceipt.receipts.length > 0 ? useReceipt.receipts[useReceipt.receipts.length - 1].id + 1 : 1;
+    if (items) receipt.items = items
+    
     try {
       if (useConnection.isConnected) {
         await useFetch.fetch('/receipts/add', 'post', formData, true, false, true)

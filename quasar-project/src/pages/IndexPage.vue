@@ -2,7 +2,7 @@
 import { useReceiptStore } from 'src/stores/receipts'
 import { useUserStore } from 'src/stores/user'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { Pie } from 'vue-chartjs'
 import { useQuasar } from 'quasar'
 
@@ -16,7 +16,7 @@ const owed = computed(() => {
   const userOwes = {} // Change from array to object
   const receipts = useReceipt.receipts // Add type annotation
   const userId = useUser.user.id // Add type annotation
-
+ if (receipts == null) return null
   receipts.forEach((receipt) => {
     // Add type annotation
 
@@ -122,13 +122,15 @@ const options = computed(() => {
     },
   }
 })
+onMounted(() => {
+  if (useReceipt.receipts == null) useReceipt.sync()
+})
 </script>
 
 <template>
   <q-page>
-    <section v-if="owed.userOwes && useReceipt.category">
+    <section v-if="useReceipt.receipts && owed.userOwes && useReceipt.category">
       <Pie :data="data" :options="options" />
     </section>
   </q-page>
-  {{ useReceipt.receipts }}
 </template>

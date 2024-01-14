@@ -27,6 +27,7 @@ export const useConnectionStore = defineStore('connectionStore', () => {
         const date = new Date()
         await Promise.all([useReceipt.sync(), useUser.sync(), useGroup.sync()])
         lastSync.value = date
+        console.log(date)
         localStorage.setItem('lastSync', JSON.stringify(date))
       }
     } else
