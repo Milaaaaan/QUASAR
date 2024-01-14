@@ -48,7 +48,7 @@ onMounted(() => {
 
 <template>
   <q-intersection transition="flip-right" class="example-item"> </q-intersection>
-  {{ receipt }}
+
   <section v-if="receipt" :class="'receipt ' + useReceipt.category[receipt.category].type">
     <div class="part">
       <q-icon color="light" size="xx-large" :name="useReceipt.category[receipt.category].icon" />

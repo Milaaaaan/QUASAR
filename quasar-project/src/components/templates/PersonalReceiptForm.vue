@@ -114,7 +114,8 @@ const submit = async () => {
     const receipt = helper.formDataToObject(formData)
     receipt.id = useReceipt.receipts.length > 0 ? useReceipt.receipts[useReceipt.receipts.length - 1].id + 1 : 1;
     if (items) receipt.items = items
-    
+    receipt.date = receipt.created
+
     try {
       if (useConnection.isConnected) {
         await useFetch.fetch('/receipts/add', 'post', formData, true, false, true)

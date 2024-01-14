@@ -26,8 +26,9 @@ const activity = computed(() => {
       isTransaction: true,
     }))
   )
+  array.sort((a, b) =>  new Date(b.date) - new Date(a.date))
+console.log(array)
 
-  array.sort((a, b) => new Date(b.date) - new Date(a.date))
   return array
 })
 

@@ -32,13 +32,7 @@ if (useUser.friends == null) useUser.sync()
 </template>
 
 <style scoped lang="scss">
-.q-tab--inactive {
-  color: $text;
-}
 
-.body--dark .q-tab--inactive {
-  color: $white;
-}
 
 main {
   min-height: initial !important;
