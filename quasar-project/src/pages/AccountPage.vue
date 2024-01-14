@@ -15,7 +15,7 @@ const quasar = useQuasar()
 
 const notify = ref(useUser.settings.notifications)
 const vibrations = ref(useUser.settings.vibrations)
-const darkmode = ref(quasar.dark.isActive)
+const darkmode = ref(useUser.settings.dark)
 
 const logout = async () => {
   await useUser.logout()

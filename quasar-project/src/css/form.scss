@@ -32,3 +32,7 @@ body.dark {
     }
   }
 }
+
+.body--dark .q-field .text-negative .q-field__label {
+  color: $white;
+}

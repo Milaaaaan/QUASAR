@@ -2,6 +2,8 @@ import { useConnectionStore } from 'src/stores/connection'
 import { useFetchStore } from 'src/stores/fetchData'
 
 const syncData = async (array, update_url, get_url) => {
+  if (array == null) array = []
+
   const useFetch = useFetchStore()
   const useConnection = useConnectionStore()
   const ids = array.map((x) => x.id)

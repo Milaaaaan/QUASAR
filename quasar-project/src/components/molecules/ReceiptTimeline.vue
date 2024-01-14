@@ -8,6 +8,11 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  loading: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 })
 
 const useReceipt = useReceiptStore()
@@ -44,16 +49,27 @@ const icon = (category) => {
 
 <template>
   <q-timeline>
-    <q-timeline-entry
-      v-for="(item, index) in receipts"
-      :key="index"
-      :icon="icon(item.category)"
-      :color="color(item.category)"
-    >
-      <template v-slot:subtitle> {{ helper.cleanTime(item.created_at) }} </template>
-
-      <activity-card link="Group receipt detail" :index="index" :value="item" :id="item.id" />
-    </q-timeline-entry>
+    <div v-if="!loading">
+      <q-timeline-entry
+        v-for="(item, index) in receipts"
+        :key="index"
+        :icon="icon(item.category)"
+        :color="color(item.category)"
+      >
+        <template v-slot:subtitle> {{ helper.cleanTime(item.created_at) }} </template>
+        <q-intersection transition="scale">
+          <activity-card link="Group receipt detail" :index="index" :value="item" :id="item.id" />
+        </q-intersection>
+      </q-timeline-entry>
+    </div>
+    <div v-else>
+      <q-timeline-entry v-for="x in 5" :key="x" color="grey-8" icon="hourglass_bottom">
+        <template v-slot:subtitle> <q-skeleton type="text" width="150px" /> </template>
+        <q-intersection transition="scale">
+          <activity-card link="Group receipt detail" :index="-1" :value="null" :id="-1" loading />
+        </q-intersection>
+      </q-timeline-entry>
+    </div>
   </q-timeline>
 </template>
 
@@ -61,6 +77,10 @@ const icon = (category) => {
 .q-timeline__title {
   margin-top: 0;
   margin-bottom: 5px;
+}
+
+.q-timeline__entry {
+  height: 7rem;
 }
 
 .q-timeline__content {

@@ -1,10 +1,14 @@
 <script setup>
+import { useUserStore } from 'src/stores/user';
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
+const useUser = useUserStore()
 const route = useRoute()
 const tab = ref(route.path.startsWith('/social/groups') ? 'Groups' : 'Friends')
+
+if (useUser.friends == null) useUser.sync()
 </script>
 
 <template>

@@ -12,7 +12,7 @@ export const useUserStore = defineStore('userStore', () => {
   const useFetch = useFetchStore()
   const useConnection = useConnectionStore()
   const notifications = ref([])
-  const friends = ref([])
+  const friends = ref(null)
   const requests = ref([])
   const listener = ref(null)
   const settings = ref({
@@ -119,7 +119,7 @@ export const useUserStore = defineStore('userStore', () => {
       const data = await useFetch.login(credentials)
       user.value = data.user
       token.value = data.access_token
-      await useConnection.reload()
+      update()
     } catch (err) {
       return false
     }
@@ -154,7 +154,7 @@ export const useUserStore = defineStore('userStore', () => {
   async function clear() {
     user.value = null
     token.value = null
-    friends.value = []
+    friends.value = null
     requests.value = []
     notifications.value = []
     localStorage.clear()

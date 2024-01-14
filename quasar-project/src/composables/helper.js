@@ -17,6 +17,21 @@ function formatPrice(price) {
   return formatter.format(roundedPrice)
 }
 
+function formDataToObject(formData) {
+  let object = {}
+  for (let pair of formData.entries()) {
+    if (object[pair[0]]) {
+      if (!Array.isArray(object[pair[0]])) {
+        object[pair[0]] = [object[pair[0]]]
+      }
+      object[pair[0]].push(pair[1])
+    } else {
+      object[pair[0]] = pair[1]
+    }
+  }
+  return object
+}
+
 function dateDifferenceInDays(date1, date2) {
   // Parse the dates into JavaScript Date objects
   const startDate = new Date(date1)
@@ -52,7 +67,7 @@ const cleanPeriod = (date, date2) => {
 }
 
 const getContribrutors = (receipt, user, members) => {
-  if (receipt.contributors) {
+  if (receipt.contributors && receipt.contributors.length > 1) {
     let arr = []
     receipt.contributors.forEach((element) => {
       let contributor = null
@@ -70,8 +85,7 @@ const getContribrutors = (receipt, user, members) => {
       arr.push(combinedData)
     })
     return arr
-  }
-  return [{ ...user, owed: receipt.total }]
+  } else return [{ ...user, owed: receipt.total }]
 }
 
 const getTimeAgo = (dateTimeString) => {
@@ -103,4 +117,5 @@ export default {
   cleanPeriod,
   cleanTime,
   getTimeAgo,
+  formDataToObject,
 }

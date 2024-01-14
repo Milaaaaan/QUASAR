@@ -46,8 +46,6 @@ export const useReceiptStore = defineStore('receiptsStore', () => {
   ]
 
   const init = async () => {
-    console.log('init')
-    console.log(localStorage.getItem('receipts'))
     if (localStorage.getItem('receipts')) receipts.value = JSON.parse(localStorage.getItem('receipts'))
     if (localStorage.getItem('transactions')) transactions.value = JSON.parse(localStorage.getItem('transactions'))
   }

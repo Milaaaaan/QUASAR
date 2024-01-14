@@ -169,7 +169,5 @@ nav .action-btn {
   }
 }
 
-body.dark nav {
-  filter: drop-shadow(0px 0px 1px var(ion-color-step-100));
-}
+
 </style>

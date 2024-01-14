@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import logo from 'src/assets/logo.png'
 
 const route = useRoute()
 defineProps({
@@ -23,7 +24,7 @@ const canGoBack = computed(() => route.path != '/' && route.name != 'Login' && r
         <q-btn v-if="canGoBack" @click="$router.back" flat rounded icon="arrow_back_ios_new" class="back-btn" />
         <h1>{{ $route.name }}</h1>
         <div class="image">
-          <img src="/src/assets/logo.svg" alt="" />
+          <img :src="logo" alt="" />
         </div>
       </div>
     </q-toolbar>

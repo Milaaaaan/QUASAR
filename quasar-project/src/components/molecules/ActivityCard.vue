@@ -24,6 +24,11 @@ const props = defineProps({
     type: String,
     default: 'Receipt details',
   },
+  loading: {
+    required: false,
+    type: Boolean,
+    default: false,
+  },
 })
 
 const contributors = computed(() => {
@@ -41,7 +46,7 @@ const transactor = (value) => {
 </script>
 
 <template>
-  <router-link :to="{ name: 'Receipt details', params: { index: value.id } }" class="card">
+  <router-link v-if="!loading" :to="{ name: 'Receipt details', params: { index: value.id } }" class="card">
     <div class="info">
       <div>
         <h3>{{ value.title }}</h3>
@@ -57,6 +62,19 @@ const transactor = (value) => {
       </div>
     </div>
   </router-link>
+  <div class="card" v-else>
+    <div class="info">
+      <div>
+        <q-skeleton type="rect" width="150px" />
+        <div class="type">
+          <q-skeleton type="text" width="150px" />
+        </div>
+      </div>
+      <div class="flex">
+        <q-skeleton type="rect" width="50px" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -66,6 +84,12 @@ const transactor = (value) => {
   padding: 0.2rem 0.5rem;
   border-radius: 5px;
   font-size: 0.8rem;
+}
+
+.flex {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 .name {

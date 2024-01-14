@@ -2,11 +2,15 @@
 import helper from 'src/composables/helper'
 import { useReceiptStore } from 'src/stores/receipts'
 import { useUserStore } from 'src/stores/user'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import img from 'src/assets/nopfp.jpg'
+import ProfilePicture from 'src/components/atoms/ProfilePicture.vue'
+import TheMap from 'src/components/molecules/TheMap.vue'
+import { useMapStore } from 'src/stores/map'
 
 const useReceipt = useReceiptStore()
+const useMap = useMapStore()
 const useUser = useUserStore()
 const route = useRoute()
 const columns = [
@@ -32,61 +36,75 @@ const creator = computed(() => {
   }
   return null
 })
+
+onMounted(() => {
+  if (receipt.value && receipt.value.lon) {
+    const pos = { lat: receipt.value.lat, lon: receipt.value.lon }
+    useMap.addCustomMarker(receipt.value.title, pos, true)
+  }
+})
 </script>
 
 <template>
+  <q-intersection transition="flip-right" class="example-item"> </q-intersection>
+
   <section v-if="receipt" :class="'receipt ' + useReceipt.category[receipt.category].type">
-    <div class="part">
+    <q-intersection transition="fade" once class="part">
       <q-icon color="light" size="xx-large" :name="useReceipt.category[receipt.category].icon" />
       <h2>{{ receipt.title }}</h2>
       <h3>{{ receipt.type }}</h3>
-      <p>{{ receipt.description }}</p>
-      <p>{{ receipt.location }}</p>
-      <p v-if="creator">
+      <p class="creator">{{ receipt.location }}</p>
+      <p class="creator" v-if="creator">
         Created by
         <b>{{ creator.name }}</b>
       </p>
-    </div>
-    <span v-if="receipt.items" class="splicer"></span>
+    </q-intersection>
+    <span v-if="receipt.items.length > 0" class="splicer"></span>
 
-    <div v-if="receipt.items">
+    <div v-if="receipt.items.length > 0">
       <q-table flat :rows="receipt.items" :columns="columns" title="Items" row-key="name" />
     </div>
 
     <span v-if="contributors" class="splicer"></span>
 
-    <div v-if="contributors">
+    <q-intersection transition="fade" once v-if="contributors">
+      <h3 class="pd">Contributors</h3>
       <q-list>
-        <q-item-label header>Friends</q-item-label>
         <div v-for="(contributor, index) in contributors" :key="index">
           <q-item clickable v-ripple @click="openPopUP(friend)">
             <q-item-section avatar>
-              <q-avatar>
-                <img :src="contributor.profile_picture ? contributor.profile_picture : img" />
-              </q-avatar>
+              <profile-picture size="x-small" :pic="contributor.profile_picture" />
             </q-item-section>
 
             <q-item-section>
-              <q-item-label lines="1">{{ contributor.name }}</q-item-label>
+              <q-item-label>{{ contributor.name }}</q-item-label>
             </q-item-section>
 
-            <q-item-section side top>
-              <q-item-label lines="1">{{ helper.formatPrice(contributor.owed) }} </q-item-label>
-              <q-item-label lines="2"> Owed </q-item-label>
+            <q-item-section side>
+              <q-item-label>{{ helper.formatPrice(contributor.owed) }} </q-item-label>
             </q-item-section>
           </q-item>
 
           <q-separator inset="item" />
         </div>
       </q-list>
-    </div>
+    </q-intersection>
 
-    <span class="splicer"></span>
+    <span v-if="receipt.img_url" class="splicer"></span>
 
-    <div class="part">
-      <h3>Picture</h3>
+    <q-intersection v-if="receipt.img_url" once>
+      <h3 class="pd">Picture</h3>
       <img :src="receipt.img_url" alt="" />
-    </div>
+    </q-intersection>
+
+    <span v-if="receipt.lon" class="splicer"></span>
+
+    <q-intersection transition="fade" v-if="receipt.lon" once>
+      <h3 class="pd">Location</h3>
+      <TheMap :show="receipt.lon" />
+
+      <p class="part">{{ receipt.location }}</p>
+    </q-intersection>
 
     <i>{{ helper.cleanTime(receipt.created_at) }}</i>
   </section>
@@ -95,7 +113,12 @@ const creator = computed(() => {
 <style scoped lang="scss">
 i {
   display: block;
-  margin-top: 3rem;
+  padding-bottom: 1rem;
+  margin: 3rem 1rem 1rem;
+}
+
+.creator {
+  margin-top: 2rem;
 }
 
 ul {
@@ -103,8 +126,16 @@ ul {
   background-color: transparent;
 }
 
+.pd {
+  padding: 0 1rem;
+}
+
 .part {
   padding: 1rem;
+}
+
+img {
+  width: 100%;
 }
 
 .receipt {
@@ -213,7 +244,6 @@ ul {
 }
 
 .body--dark {
-
   section {
     background-color: $step-800;
   }

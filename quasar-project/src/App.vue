@@ -8,11 +8,6 @@ const useConnection = useConnectionStore()
   ! add group
   ! add group members
   ! make receipts
-  
-
-
-
-
 */
 </script>
 

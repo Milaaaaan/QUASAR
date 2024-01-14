@@ -4,6 +4,7 @@ import img from 'src/assets/nopfp.jpg'
 import { usePopUpStore } from 'src/stores/popup'
 import { useUserStore } from 'src/stores/user'
 import { useFetchStore } from 'src/stores/fetchData'
+import ProfilePicture from '../atoms/ProfilePicture.vue'
 
 const usePopUp = usePopUpStore()
 const useFetch = useFetchStore()
@@ -57,9 +58,7 @@ const declineFriend = async (x) => {
     <div v-for="(friend, index) in friends" :key="index">
       <q-item clickable v-ripple @click="openPopUP(friend)">
         <q-item-section avatar>
-          <q-avatar>
-            <img :src="friend.profile_picuture ? friend.profile_picuture : img" />
-          </q-avatar>
+          <ProfilePicture size="small" :pic="friend.profile_picture" />
         </q-item-section>
 
         <q-item-section>

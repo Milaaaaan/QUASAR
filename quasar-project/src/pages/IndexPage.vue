@@ -130,4 +130,5 @@ const options = computed(() => {
       <Pie :data="data" :options="options" />
     </section>
   </q-page>
+  {{ useReceipt.receipts }}
 </template>

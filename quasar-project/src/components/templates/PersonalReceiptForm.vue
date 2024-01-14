@@ -7,14 +7,24 @@ import { useGroupStore } from 'src/stores/groups'
 import { useReceiptStore } from 'src/stores/receipts'
 import { useUserStore } from 'src/stores/user'
 import { computed, ref, watch } from 'vue'
+import helper from 'src/composables/helper'
+import LocationSearch from 'src/components/atoms/LocationSearch.vue'
+import TheMap from 'src/components/molecules/TheMap.vue'
+import { useMapStore } from 'src/stores/map'
+import { Geolocation } from '@capacitor/geolocation'
 
 const name = ref()
 const total = ref(0)
 const loading = ref(false)
 const useConnection = useConnectionStore()
+const useMap = useMapStore()
 const useUser = useUserStore()
 const useGroup = useGroupStore()
 const useFetch = useFetchStore()
+
+const location = ref(null)
+const lon = ref(null)
+const lat = ref(null)
 const image = ref(null)
 const step = ref(1)
 const text = ref(null)
@@ -53,7 +63,7 @@ const artikles = ref([
   { name: 'example', amount: 3, price: 3.49 },
 ])
 
-const nameError = computed(() => validator.name(submitted.value, name.value, 'Name', 5))
+const nameError = computed(() => validator.name(true, name.value, 'Receipt title', 5))
 
 const take = async () => {
   image.value = await takePicture()
@@ -67,7 +77,7 @@ const onGroupChange = (e) => {
   group.value = e.detail.value
 }
 
-const totalError = computed(() => validator.number(submitted.value, total.value, 'Total', 0.01, 1000000))
+const totalError = computed(() => validator.number(true, total.value, 'Total', 0.01, 1000000))
 
 watch([withArtikles, artikles], () => {
   if (withArtikles.value && artikles.value)
@@ -81,26 +91,31 @@ const submit = async () => {
 
     const items = withArtikles.value ? artikles.value : null
 
-    //TODO: if online, validate and sync
-    const receipt = {
-      type: type.value,
-      title: name.value,
-      description: text.value,
-      img_url: image.value,
-      total: total.value,
-      category: category.value.id,
-      items: items,
-      created: when.value ? when.value : new Date(),
-      friend: friend.value,
-      group: group.value,
-      created_by: useUser.user.id,
-      persons: persons.value,
-      synced: false,
-    }
+    const formData = new FormData()
+
+    formData.append('type', type.value)
+    formData.append('title', name.value)
+    formData.append('description', text.value)
+    formData.append('total', total.value)
+    formData.append('category', category.value.id)
+    formData.append('created', when.value ? when.value : new Date())
+    formData.append('created_by', useUser.user.id)
+    formData.append('synced', false)
+
+    if (group.value) formData.append('group', group.value)
+    if (friend.value) formData.append('friend', friend.value)
+    if (persons.value.length > 0) formData.append('persons', persons.value)
+    if (items) formData.append('items', JSON.stringify(items))
+    if (image.value) formData.append('img_url', image.value)
+    if (location.value) formData.append('location', location.value)
+    if (lon.value) formData.append('lon', lon.value)
+    if (lat.value) formData.append('lat', lat.value)
+
+    const receipt = helper.formDataToObject(formData)
 
     try {
       if (useConnection.isConnected) {
-        await useFetch.fetch('/receipts/add', 'post', receipt)
+        await useFetch.fetch('/receipts/add', 'post', formData, true, false, true)
         receipt.synced = true
       }
     } catch (error) {
@@ -118,21 +133,47 @@ const handleForm = async () => {
   submitted.value = true
   if (step.value == 3 && !totalError.value) submit()
   if (step.value == 2) {
-    submitted.value = false
     done2.value = true
     step.value++
   }
-  if (step.value == 1 && !nameError.value) {
-    submitted.value = false
+  if (step.value == 1 && !nameError.value && !totalError.value) {
     done1.value = true
     step.value++
   }
+}
+
+const updateLocation = (new_location) => {
+  useMap.clearMap()
+  useMap.addCustomMarker(name.value, new_location, true)
+
+  location.value = new_location.formatted
+  lon.value = new_location.lon
+  lat.value = new_location.lat
+}
+
+const currentLocation = async () => {
+  const coordinates = await Geolocation.getCurrentPosition()
+  const x = await useMap.geocodeCoord(coordinates.coords.latitude, coordinates.coords.longitude)
+  lon.value = x.features[0].properties.lon
+  lat.value = x.features[0].properties.lat
+  location.value = x.features[0].properties.formatted
+
+  useMap.clearMap()
+  useMap.addCustomMarker(name.value, x.features[0].properties, true)
 }
 </script>
 
 <template>
   <section>
-    <q-stepper v-model="step" header-nav ref="stepper" color="primary" animated alternative-labels>
+    <q-stepper
+      v-model="step"
+      inactive-color="text"
+      header-nav
+      ref="stepper"
+      color="primary"
+      animated
+      alternative-labels
+    >
       <q-step :name="1" title="Basics" icon="settings" :done="done1">
         <q-input
           v-model="name"
@@ -232,14 +273,27 @@ const handleForm = async () => {
       </q-step>
 
       <!-- STEP 2-->
-      <q-step :name="2" title="Details" caption="Optional" icon="create_new_folder" :done="done2">
-        <q-uploader
-          url="http://localhost:4444/upload"
-          label="Upload a image"
-          multiple
-          accept=".jpg, image/*"
-          @rejected="onRejected"
-        />
+      <q-step
+        :disable="nameError != '' || totalError != ''"
+        :name="2"
+        title="Details"
+        caption="Optional"
+        icon="create_new_folder"
+        :done="done2"
+      >
+        <q-file accept=".jpg, image/*" filled bottom-slots v-model="image" label counter>
+          <template v-slot:prepend>
+            <q-icon name="image" @click.stop.prevent />
+          </template>
+          <template v-slot:append>
+            <q-icon name="close" @click.stop.prevent="image = null" class="cursor-pointer" />
+          </template>
+
+          <template v-slot:label>
+            Upload image
+            <span class="text-primary">(optional*)</span>
+          </template>
+        </q-file>
 
         <q-input v-model="text" label="Note" type="textarea" filled>
           <template v-slot:label>
@@ -248,6 +302,10 @@ const handleForm = async () => {
           </template>
         </q-input>
 
+        <LocationSearch v-model="location" :error="LocationError" @new-location="updateLocation" />
+        <q-btn class="full" color="primary" icon="my_location" label="Use my location" @click="currentLocation" />
+        <TheMap :show="useConnection.isConnected" />
+
         <q-stepper-navigation>
           <q-btn @click="handleForm" color="primary" label="Continue" />
           <q-btn @click="step--" color="negative" label="Back" />
@@ -255,7 +313,13 @@ const handleForm = async () => {
       </q-step>
 
       <!-- STEP 3-->
-      <q-step :name="3" title="3" icon="person" :done="done3">
+      <q-step
+        :disable="nameError != '' || totalError != ''"
+        :name="3"
+        title="who"
+        icon="people"
+        :done="done3"
+      >
         <q-stepper-navigation>
           <q-btn @click="handleForm" color="primary" label="Save" />
         </q-stepper-navigation>
@@ -273,8 +337,17 @@ const handleForm = async () => {
   width: 100%;
 }
 
+.full {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
 .q-select {
   margin-bottom: 1rem;
+}
+
+.buttons {
+  margin: 1rem 0;
 }
 
 .body--dark #q-app section,
