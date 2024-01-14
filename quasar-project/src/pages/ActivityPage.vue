@@ -27,8 +27,6 @@ const activity = computed(() => {
     }))
   )
   array.sort((a, b) =>  new Date(b.date) - new Date(a.date))
-console.log(array)
-
   return array
 })
 

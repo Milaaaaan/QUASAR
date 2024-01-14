@@ -27,7 +27,7 @@ const seen = async (notification) => {
   await useUser.update()
 }
 
-const remove = async (notification) => {
+const remove = async (event, notification) => {
   try {
     await useFetch.fetch(`/notifications/${notification.id}/remove`, 'del', null, true, false, true)
     notification.synced = true
@@ -64,7 +64,7 @@ const remove = async (notification) => {
       <q-item-section side top>
         <q-btn
           v-if="notification.type == 1"
-          @click.prevent="remove(notification)"
+          @click.stop.prevent="remove($event ,notification)"
           color="negative"
           icon="delete"
           size="sm"

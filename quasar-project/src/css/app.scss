@@ -1,6 +1,7 @@
 // app global css in SCSS form
 html,
 body {
+  background-color: $background;
   overscroll-behavior: none;
 }
 
@@ -132,6 +133,10 @@ label {
   color: $text;
 }
 
+.q-lsist {
+  background-color: $card;
+}
+
 // DARK THEME
 .body--dark #q-app {
   .q-page-container {
@@ -151,7 +156,7 @@ label {
     color: $white;
   }
 
-  .q-list[data-v-9e2f1530] {
+  .q-list {
     background-color: $step-850;
   }
 

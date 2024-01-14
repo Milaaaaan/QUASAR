@@ -35,7 +35,7 @@ const take = async () => {
     <img :class="size" :src="pic ? pic : img" alt="users profile picture" />
     <div v-if="edit">
       <q-btn color="primary" @click="take">
-        <q-icon name="camera" />
+        <q-icon name="collections" />
       </q-btn>
     </div>
   </div>
@@ -70,8 +70,8 @@ img {
   height: 2rem;
   border-radius: 50%;
   position: relative;
-  right: 1rem;
-  bottom: -1rem;
+  right: 1.5rem;
+  bottom: -0.5rem;
   justify-content: center;
 
   i {

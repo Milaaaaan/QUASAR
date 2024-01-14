@@ -36,9 +36,13 @@ const acceptFriend = async (x) => {
   await useFetch.fetch('/friends/accept', 'post', { id: x.friend_id }, true, true, false)
   const index = useUser.friends.findIndex((request) => request.friend_id === x.friend_id)
   x.friend = true
+  console.log(useUser.friends[index])
+  console.log(x)
   if (index !== -1) {
-    useUser.friends[index].requested = x
+    useUser.friends[index] = x
   }
+  console.log(useUser.friends[index])
+  console.log(x)
   useUser.update()
 }
 
@@ -55,7 +59,7 @@ const declineFriend = async (x) => {
 <template>
   <q-list>
     <q-item-label header>{{ label }}</q-item-label>
-    <div v-for="(friend, index) in friends" :key="index">
+    <q-intersection transition="scale" v-for="(friend, index) in friends" :key="index">
       <q-item clickable v-ripple @click="openPopUP(friend)">
         <q-item-section avatar>
           <ProfilePicture size="small" :pic="friend.profile_picture" />
@@ -74,9 +78,16 @@ const declineFriend = async (x) => {
               dense
               icon="delete"
               label="Decline"
-              @click="declineFriend(friend)"
+              @click.stop="declineFriend(friend)"
             />
-            <q-btn size="xx-small" color="positive" dense icon="done" label="Accept" @click="acceptFriend(friend)" />
+            <q-btn
+              size="xx-small"
+              color="positive"
+              dense
+              icon="done"
+              label="Accept"
+              @click.stop="acceptFriend(friend)"
+            />
           </q-item-label>
         </q-item-section>
 
@@ -87,13 +98,17 @@ const declineFriend = async (x) => {
       </q-item>
 
       <q-separator inset="item" />
-    </div>
+    </q-intersection>
   </q-list>
 </template>
 
 <style scoped lang="scss">
 .column {
   align-content: start;
+}
+
+.q-intersection {
+  height: 4rem;
 }
 
 .flex {

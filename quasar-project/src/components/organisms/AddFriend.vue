@@ -83,7 +83,7 @@ const submit = async () => {
       <FormSplitter v-if="isSupported" text="OR" />
 
       <q-btn size="large" v-if="isSupported" @click="scan" class="upload">
-        <ion-icon aria-hidden="true" :icon="camera" />
+        <q-icon name="camer_alt" />
         Scan QR code
       </q-btn>
     </form>

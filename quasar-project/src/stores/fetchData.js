@@ -61,12 +61,12 @@ export const useFetchStore = defineStore('fetchStore', () => {
         else if (type.toLocaleLowerCase() === 'del') data = (await axios.delete(url)).data
         else data = await (await axios.get(url)).data
 
-        if (showMessage) responses.value.unshift({ message: data.message, type: 'positive' })
+        if (showMessage) responses.value.unshift({ message: data.message, type: 'positive', icon: 'check'  })
 
         if (allData) return data
         return data.data
       } else if (showErrors) {
-        responses.value.unshift({ message: 'No internet connection', type: 'negative' })
+        responses.value.unshift({ message: 'No internet connection', type: 'negative', icon: 'wifi' })
       }
     } catch (e) {
       if (showErrors) handleErrors(e, throwError)
@@ -83,6 +83,7 @@ export const useFetchStore = defineStore('fetchStore', () => {
     responses.value.unshift({
       message: message,
       type: 'negative',
+      icon: 'warning',
     })
     if (throwError) throw new Error(message)
   }

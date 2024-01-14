@@ -29,21 +29,38 @@ export const useUserStore = defineStore('userStore', () => {
   watch(
     user,
     () => {
-      if (user.value) {
-        pusher.connect()
-        if (!listener.value) {
-          listener.value = pusher.subscribe('user.' + user.value.id)
-          listener.value.bind('new-notification', function (data) {
-            useFetch.responses.unshift({
-              message: data.notification.title,
-              type: 'info',
+      try {
+        if (user.value) {
+          pusher.connect()
+          if (!listener.value) {
+            listener.value = pusher.subscribe('user.' + user.value.id)
+            listener.value.bind('new-notification', function (data) {
+              let icon = 'danger'
+              switch (data.notification.type) {
+                case 1:
+                  icon = 'info'
+                  break
+
+                case 2:
+                  icon = 'warning'
+                  break
+
+                default:
+                  icon = 'danger'
+                  break
+              }
+
+              useFetch.responses.unshift({
+                message: data.notification.title,
+                icon: icon,
+                type: 'primary',
+              })
+              notifications.value.unshift(data.notification)
+              useConnection.reload()
             })
-            notifications.value.unshift(data.notification)
-            update()
-            sync()
-          })
-        }
-      } else pusher.disconnect()
+          }
+        } else pusher.disconnect()
+      } catch (err) {}
     },
     { deep: true }
   )

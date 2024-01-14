@@ -129,12 +129,6 @@ const showQr = () => {
 </template>
 
 <style scoped lang="scss">
-#app ion-list {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
 .body--dark #q-app section {
   background-color: $step-850;
 }
@@ -150,10 +144,6 @@ hr {
 h3,
 p {
   text-align: center;
-}
-
-.q-list {
-  background-color: $card;
 }
 
 .q-item {
@@ -180,4 +170,6 @@ section {
     align-items: center;
   }
 }
+
+
 </style>
