@@ -3,7 +3,6 @@ import { useUserStore } from 'src/stores/user'
 import helper from 'src/composables/helper'
 import { usePopUpStore } from 'src/stores/popup'
 import ProfilePicture from 'src/components/atoms/ProfilePicture.vue'
-import NotificationsCard from 'src/components/molecules/NotificationCard.vue'
 import { ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useConnectionStore } from 'src/stores/connection'
@@ -53,10 +52,6 @@ const showQr = () => {
         <h2>{{ useUser.user.name }}</h2>
         <i>Member since: {{ helper.cleanEU(useUser.user.created_at) }}</i>
       </div>
-      <hr />
-      <NotificationsCard :notifies="useUser.notifications" />
-
-      <q-btn color="primary" icon="check" label="OK" @click="useConnection.reload()" />
 
       <q-list padding separator>
         <q-item-label header>Settings</q-item-label>

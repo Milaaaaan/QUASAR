@@ -5,6 +5,7 @@ import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import { computed, onMounted } from 'vue'
 import { Pie } from 'vue-chartjs'
 import { useQuasar } from 'quasar'
+import NotificationCard from 'src/components/molecules/NotificationCard.vue'
 
 const $q = useQuasar()
 const useReceipt = useReceiptStore()
@@ -16,7 +17,7 @@ const owed = computed(() => {
   const userOwes = {} // Change from array to object
   const receipts = useReceipt.receipts // Add type annotation
   const userId = useUser.user.id // Add type annotation
- if (receipts == null) return null
+  if (receipts == null) return null
   receipts.forEach((receipt) => {
     // Add type annotation
 
@@ -132,5 +133,27 @@ onMounted(() => {
     <section v-if="useReceipt.receipts && owed.userOwes && useReceipt.category">
       <Pie :data="data" :options="options" />
     </section>
+
+    <q-separator spaced inset vertical dark />
+
+    <section>
+      <NotificationCard :notifies="useUser.notifications" />
+    </section>
   </q-page>
 </template>
+
+<style scoped lang="scss">
+.q-separator {
+  width: calc(100% - 1rem);
+  margin: 1rem auto;
+  height: 1px;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  max-width: 25rem;
+  margin: 1rem auto;
+  align-items: center;
+}
+</style>

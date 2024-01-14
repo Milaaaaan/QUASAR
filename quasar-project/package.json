@@ -1,7 +1,7 @@
 {
-  "name": "quasar-project",
+  "name": "bill-buddy",
   "version": "0.0.1",
-  "description": "A Quasar Project",
+  "description": "Bill Buddy app",
   "productName": "BillBuddy",
   "author": "Milan <milan.degraeve@student.odisee.be>",
   "private": true,
@@ -24,6 +24,7 @@
     "@capacitor/haptics": "^5.0.6",
     "@capacitor/keyboard": "^5.0.7",
     "@capacitor/network": "^5.0.6",
+    "@capacitor/push-notifications": "^5.1.0",
     "@capacitor/splash-screen": "^5.0.6",
     "@capacitor/status-bar": "5.0.6",
     "@quasar/extras": "^1.16.4",
