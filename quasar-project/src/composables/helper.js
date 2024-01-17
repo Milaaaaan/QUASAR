@@ -71,17 +71,15 @@ const getContribrutors = (receipt, user, members) => {
     let arr = []
     receipt.contributors.forEach((element) => {
       let contributor = null
-      if (user.id == element.user_id) contributor = user
-      else contributor = members.filter((x) => x.id == element.user_id)[0]
-
+      if (user.id == element.id) contributor = user
+      else contributor = members.filter((x) => x.id == element.id)[0]
       const combinedData = {
         ...contributor,
-        owed: element.owed,
+        owed: element.pivot.owed,
         receipt_id: element.receipt_id,
         created_at: element.created_at,
         updated_at: element.updated_at,
       }
-
       arr.push(combinedData)
     })
     return arr

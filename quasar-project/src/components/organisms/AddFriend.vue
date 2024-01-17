@@ -6,14 +6,18 @@ import { useUserStore } from 'src/stores/user'
 import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning'
 import { computed, onMounted, ref } from 'vue'
 import FormSplitter from '../atoms/FormSplitter.vue'
+import { useRoute } from 'vue-router'
 
 const code = ref('')
 const submitted = ref(false)
+const route = useRoute()
 const loading = ref(false)
 const useFetch = useFetchStore()
 const useUser = useUserStore()
 const isSupported = ref(false)
 const codeError = computed(() => validator.name(submitted.value, code.value, 'Friendcode', 7))
+
+//Check if url has code=8746548
 
 const checkSupport = async () => {
   const result = await BarcodeScanner.isSupported()
@@ -58,6 +62,12 @@ const submit = async () => {
       loading.value = false
     }
   }
+}
+
+if (route.query.code) {
+  console.log(route.query)
+  code.value = route.query.code
+  submit()
 }
 </script>
 

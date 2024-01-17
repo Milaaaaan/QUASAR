@@ -21,7 +21,6 @@ const columns = [
 ]
 
 const receipt = computed(() => {
-  console.log(route.params.index)
   if (route.params.index) return useReceipt.receipts.find((x) => x.id == route.params.index)
   return null
 })
@@ -102,7 +101,7 @@ onMounted(() => {
 
     <div v-if="receipt.lon">
       <h3 class="pd">Location</h3>
-      <TheMap :show="receipt.lon" />
+      <TheMap :show="receipt.lon ? true : false" />
 
       <p class="part">{{ receipt.location }}</p>
     </div>

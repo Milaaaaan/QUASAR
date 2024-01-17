@@ -90,7 +90,7 @@ h3 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 11rem;
+  width: 9rem;
 }
 
 .flex {

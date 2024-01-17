@@ -1,6 +1,8 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import { authGuard, authNone } from './authGuard'
+import { App } from '@capacitor/app'
+
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation;
@@ -9,6 +11,8 @@ import { authGuard, authNone } from './authGuard'
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
+
+// AE:06:65:92:BD:08:CC:AD:96:F3:78:08:D5:E2:9A:00:B5:BC:DD:69:DF:53:D3:F3:3E:40:C9:67:1C:FD:94:1A
 
 // export default route(function ( { store, ssrContext } ) {
 const createHistory = process.env.SERVER
@@ -132,12 +136,12 @@ const router = createRouter({
           beforeEnter: [authGuard],
           component: () => import('pages/AccountPage.vue'),
         },
+        {
+          path: '/:catchAll(.*)*',
+          name: 'Error',
+          component: () => import('pages/ErrorNotFound.vue'),
+        },
       ],
-    },
-
-    {
-      path: '/:catchAll(.*)*',
-      component: () => import('pages/ErrorNotFound.vue'),
     },
   ],
 
