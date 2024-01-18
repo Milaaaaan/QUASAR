@@ -70,6 +70,7 @@ const getContribrutors = (receipt, user, members) => {
   if (receipt.contributors && receipt.contributors.length > 1) {
     let arr = []
     receipt.contributors.forEach((element) => {
+      console.log(element)
       let contributor = null
       if (user.id == element.id) contributor = user
       else contributor = members.filter((x) => x.id == element.id)[0]

@@ -1,14 +1,23 @@
 <script setup>
 import { useUserStore } from 'src/stores/user';
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useGroupStore } from'src/stores/groups'
+import { useReceiptStore } from 'src/stores/receipts';
 
 const router = useRouter()
 const useUser = useUserStore()
+const useReceipt = useReceiptStore()
+const useGroup = useGroupStore()
 const route = useRoute()
 const tab = ref(route.path.startsWith('/social/groups') ? 'Groups' : 'Friends')
 
-if (useUser.friends == null) useUser.sync()
+onMounted(() => {
+  if (useUser.friends == null) useUser.sync()
+  if (useReceipt.receipts == null) useReceipt.sync()
+  if (useGroup.group == null) useGroup.sync()
+})
+
 </script>
 
 <template>

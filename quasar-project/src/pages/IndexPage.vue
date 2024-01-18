@@ -14,21 +14,18 @@ const useUser = useUserStore()
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 const owed = computed(() => {
-  const userOwes = {} // Change from array to object
-  const receipts = useReceipt.receipts // Add type annotation
-  const userId = useUser.user.id // Add type annotation
+  const userOwes = {}
+  const receipts = useReceipt.receipts
+  const userId = useUser.user.id
   if (receipts == null) return null
   receipts.forEach((receipt) => {
-    // Add type annotation
-
     if (receipt.type !== 'personal') {
       receipt.contributors.forEach((contributor) => {
-        // Add type annotation
-        if (contributor.user_id === userId) {
+        console.log(receipt)
+        if (contributor.id === userId) {
           const category = useReceipt.category.find((x) => x.id == receipt.category)
           if (!userOwes[category.id]) {
             userOwes[category.id] = {
-              // Create an object with desired properties
               id: category.id,
               label: category?.label,
               icon: category?.icon,
@@ -37,14 +34,13 @@ const owed = computed(() => {
             }
             userOwes[category.id].total = 0
           }
-          userOwes[category.id].total += contributor.owed // Update the total property
+          userOwes[category.id].total += contributor.pivot.owed
         }
       })
     } else {
       const category = useReceipt.category.find((x) => x.id == receipt.category)
       if (!userOwes[category.id]) {
         userOwes[category.id] = {
-          // Create an object with desired properties
           id: category.id,
           label: category?.label,
           icon: category?.icon,
@@ -53,14 +49,13 @@ const owed = computed(() => {
         }
         userOwes[category.id].total = 0
       }
-      userOwes[category.id].total += receipt.total // Update the total property
+      userOwes[category.id].total += receipt.total
     }
   })
 
   const sortedOwes = Object.values(userOwes).sort((a, b) => a.id - b.id) // Sort by id
 
   const total = sortedOwes.reduce((acc, total) => {
-    // Add type annotation
     return acc + total
   }, 0)
 
@@ -133,7 +128,6 @@ onMounted(() => {
     <section v-if="useReceipt.receipts && owed.userOwes && useReceipt.category">
       <Pie :data="data" :options="options" />
     </section>
-
     <q-separator spaced inset vertical dark />
 
     <section>

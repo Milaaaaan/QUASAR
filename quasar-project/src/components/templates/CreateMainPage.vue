@@ -110,7 +110,7 @@ ul {
         animation: changeRadius 20s infinite alternate linear;
         top: 1rem;
         filter: blur(5px);
-        left: 1rem;
+        left: 0.5rem;
         height: 6rem;
         width: 6rem;
         content: '';

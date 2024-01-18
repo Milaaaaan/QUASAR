@@ -12,6 +12,7 @@ import TheMap from 'src/components/molecules/TheMap.vue'
 import { useMapStore } from 'src/stores/map'
 import { Geolocation } from '@capacitor/geolocation'
 import ProfilePicture from '../atoms/ProfilePicture.vue'
+import { useRouter } from 'vue-router'
 
 const name = ref('Receipt name')
 const total = ref(5)
@@ -20,6 +21,7 @@ const useConnection = useConnectionStore()
 const useMap = useMapStore()
 const useUser = useUserStore()
 const useGroup = useGroupStore()
+const router = useRouter()
 const useFetch = useFetchStore()
 
 const location = ref(null)
@@ -128,7 +130,7 @@ const submit = async () => {
     loading.value = true
 
     const items = withArtikles.value ? artikles.value : null
-
+    const img = image.value
     const formData = new FormData()
 
     formData.append('type', type.value)
@@ -148,7 +150,7 @@ const submit = async () => {
     if (group.value) formData.append('group', group.value.value.id)
     if (persons.value.length > 0) formData.append('contributors', JSON.stringify(x))
     if (items) formData.append('items', JSON.stringify(items))
-    if (image.value) formData.append('img_url', image.value)
+    if (image.value) formData.append('img_url', img)
     if (location.value) formData.append('location', location.value)
     if (lon.value) formData.append('lon', lon.value)
     if (lat.value) formData.append('lat', lat.value)
@@ -166,8 +168,6 @@ const submit = async () => {
     receipt.total = parseFloat(receipt.total)
     receipt.date = receipt.created
 
-    console.log(receipt)
-
     try {
       if (useConnection.isConnected) {
         await useFetch.fetch('/receipts/add', 'post', formData, true, false, true)
@@ -175,6 +175,7 @@ const submit = async () => {
       }
       useReceipt.receipts.push(receipt)
       useReceipt.update()
+      await router.push('/activity')
     } catch (error) {}
   }
 }
@@ -240,11 +241,11 @@ const updateAmount = (changedIndex) => {
     let equalShare = remainingAmount / amountPeople
 
     persons.value = persons.value.map((person, index) => {
-      if (index !== changedIndex && person.amount > 0) {
+      if (index > changedIndex && person.amount > 0) {
         let newAmount = parseFloat(person.amount) + equalShare
         if (newAmount < 0) {
-          remainingAmount += newAmount
-          person.amount = 0
+          remainingAmount += newAmount + 0.01
+          person.amount = 0.01
           amountPeople--
         } else {
           person.amount = newAmount
@@ -254,13 +255,31 @@ const updateAmount = (changedIndex) => {
       return person
     })
 
+    // Check if all indexes after the current index have an amount of 0
+    let allZero = true
+    for (let i = changedIndex + 1; i < persons.value.length; i++) {
+      if (persons.value[i].amount > 0.01) {
+        allZero = false
+        break
+      }
+    }
+
+    // If all indexes after the current index have an amount of 0, set the current index to the value where total would equal to 5
+    if (allZero) {
+      const value =
+        total.value -
+        persons.value.reduce((sum, person, index) => {
+          if (index < changedIndex) return sum + parseFloat(person.amount)
+          else if (index == changedIndex) return sum + 0
+          else return sum + 0.01
+        }, 0)
+
+      persons.value[changedIndex].amount = value
+    }
+
     updateAmount(changedIndex)
   }
 }
-
-const groupMembers = computed(() => {
-  return null
-})
 </script>
 
 <template>
@@ -449,7 +468,7 @@ const groupMembers = computed(() => {
         />
 
         <q-select
-          v-if="type != 'personal'"
+          v-if="type == 'friend' || type == 'group' && group"
           filled
           v-model="contributor"
           :options="contributors"
@@ -475,7 +494,7 @@ const groupMembers = computed(() => {
                 v-model="person.amount"
                 @update:model-value="updateAmount(index, $event)"
                 :min="0"
-                :step="(persons.length - 1) * 0.01"
+                :step="0.01"
                 :max="total"
                 color="primary"
                 track-size="10px"
@@ -489,7 +508,7 @@ const groupMembers = computed(() => {
         </q-list>
 
         <q-stepper-navigation>
-          <q-btn @click="handleForm" color="primary" label="Save" />
+          <q-btn :disable="type != 'personal' && persons.length < 2" @click="handleForm" color="primary" label="Save" />
         </q-stepper-navigation>
       </q-step>
     </q-stepper>
