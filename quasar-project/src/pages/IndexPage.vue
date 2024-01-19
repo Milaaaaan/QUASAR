@@ -21,7 +21,6 @@ const owed = computed(() => {
   receipts.forEach((receipt) => {
     if (receipt.type !== 'personal') {
       receipt.contributors.forEach((contributor) => {
-        console.log(receipt)
         if (contributor.id === userId) {
           const category = useReceipt.category.find((x) => x.id == receipt.category)
           if (!userOwes[category.id]) {
@@ -79,6 +78,7 @@ const typeColors = (type) => {
 }
 
 const data = computed(() => {
+  if (owed.value == null) return null
   const backgroundColors = owed.value.userOwes.map((owe) => typeColors(owe.type))
   const colorCount = {}
 
@@ -118,20 +118,26 @@ const options = computed(() => {
     },
   }
 })
-onMounted(() => {
-  if (useReceipt.receipts == null) useReceipt.sync()
+onMounted(async () => {
+  if (useReceipt.receipts == null) await useReceipt.sync()
+  if (useUser.notifications == null) await useUser.sync()
 })
 </script>
 
 <template>
   <q-page>
-    <section v-if="useReceipt.receipts && owed.userOwes && useReceipt.category">
-      <Pie :data="data" :options="options" />
+    <section class="pie">
+      <Pie v-if="data && data.datasets[0].data.length > 0 && owed" :data="data" :options="options" />
+      <div v-else-if="data && data.datasets[0].data.length == 0">
+        <h3>No activity yet</h3>
+        <q-btn color="primary" icon="add" label="Make receipt" to="/create/bill" />
+      </div>
+      <q-skeleton v-else class="canvas" type="QAvatar" />
     </section>
     <q-separator spaced inset vertical dark />
 
     <section>
-      <NotificationCard :notifies="useUser.notifications" />
+      <NotificationCard :skeleton="useUser.notifications == null" :notifies="useUser.notifications" />
     </section>
   </q-page>
 </template>
@@ -143,11 +149,28 @@ onMounted(() => {
   height: 1px;
 }
 
-section {
+section.pie {
   display: flex;
   flex-direction: column;
+
   max-width: 25rem;
   margin: 1rem auto;
+  padding: 0 1rem;
   align-items: center;
+
+  canvas,
+  .canvas {
+    width: 35vh !important;
+    height: 35vh !important;
+    max-width: 25rem;
+    max-height: 25rem;
+  }
+
+  .canvas {
+    width: 30vh !important;
+    height: 30vh !important;
+    max-width: 25rem;
+    max-height: 25rem;
+  }
 }
 </style>

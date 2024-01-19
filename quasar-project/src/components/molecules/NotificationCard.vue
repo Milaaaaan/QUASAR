@@ -10,6 +10,11 @@ defineProps({
     required: true,
     type: Object,
   },
+  skeleton: {
+    required: false,
+    type: Boolean,
+    default: false,
+  },
 })
 
 const useUser = useUserStore()
@@ -44,38 +49,51 @@ const remove = async (event, notification) => {
 </script>
 
 <template>
-  <q-list class="pad" separator v-if="notifies.length > 0">
-    <q-item-label header>Notifications</q-item-label>
+  <div v-if="skeleton">
+    <q-list class="pad" separator>
+      <q-item-label header> <q-skeleton type="rect" width="100px" /> </q-item-label>
+      <q-item clickable v-ripple v-for="x in 7" :key="x">
+        <q-item-section>
+          <q-item-label> <q-skeleton width="250px" /> </q-item-label>
+          <q-item-label caption><q-skeleton width="50px" /> </q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </div>
+  <div v-else>
+    <q-list class="pad" separator v-if="notifies.length > 0">
+      <q-item-label header>Notifications</q-item-label>
 
-    <q-item
-      :to="{ name: 'Friends' }"
-      clickable
-      v-ripple
-      v-for="notification in notifies"
-      :key="notification.id"
-      @click="seen(notification)"
-      :class="notification.seen ? 'seen type_' + notification.type : 'type_' + notification.type"
-    >
-      <q-item-section>
-        <q-item-label>{{ notification.title }}</q-item-label>
-        <q-item-label caption>{{ helper.getTimeAgo(notification.created_at) }} </q-item-label>
-      </q-item-section>
+      <q-item
+        :to="{ name: 'Friends' }"
+        clickable
+        v-ripple
+        v-for="notification in notifies"
+        :key="notification.id"
+        @click="seen(notification)"
+        :class="notification.seen ? 'seen type_' + notification.type : 'type_' + notification.type"
+      >
+        <q-item-section>
+          <q-item-label>{{ notification.title }}</q-item-label>
+          <q-item-label caption>{{ helper.getTimeAgo(notification.created_at) }} </q-item-label>
+        </q-item-section>
 
-      <q-item-section side top>
-        <q-btn
-          v-if="notification.type == 1"
-          @click.stop.prevent="remove($event ,notification)"
-          color="negative"
-          icon="delete"
-          size="sm"
-          round
-          dense
-          flat
-        />
-      </q-item-section>
-    </q-item>
-  </q-list>
-  <p v-else>No notifications yet!</p>
+        <q-item-section side top>
+          <q-btn
+            v-if="notification.type == 1"
+            @click.stop.prevent="remove($event, notification)"
+            color="negative"
+            icon="delete"
+            size="sm"
+            round
+            dense
+            flat
+          />
+        </q-item-section>
+      </q-item>
+    </q-list>
+    <h3 class="center" v-else>No notifications yet!</h3>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -85,7 +103,11 @@ const remove = async (event, notification) => {
   border-left: 5px solid $primary;
 }
 
-.pad {
+h3 {
+  text-align: center;
+}
+
+.center .pad {
   padding: 1rem;
 }
 

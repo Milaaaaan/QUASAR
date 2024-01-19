@@ -79,6 +79,7 @@ const contributors = computed(() => {
     })
   } else if (type.value == 'group' && group.value) {
     useUser.friends.forEach((x) => {
+      console.log(x)
       const grp = x.groups.find((y) => y.group_id == group.value.value.id && y.joined)
       if (grp) {
         people.push({ label: x.name, value: x })

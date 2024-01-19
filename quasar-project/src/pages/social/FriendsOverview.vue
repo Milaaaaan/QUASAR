@@ -3,7 +3,7 @@ import { useUserStore } from 'src/stores/user'
 import { computed } from 'vue'
 import FriendCard from 'src/components/molecules/FriendCard.vue'
 
-const loading = computed(() => useUser.friends ? false : true)
+const loading = computed(() => (useUser.friends ? false : true))
 const useUser = useUserStore()
 
 const requests = computed(() => {
@@ -23,9 +23,11 @@ const others = computed(() => {
 <template>
   <q-page>
     <section class="card default" v-if="$route.name == 'Friends'">
+      <q-btn class="action" dense rounded color="primary" icon="add" to="/social/friends/add" />
       <div v-if="!loading">
-        <FriendCard v-if="requests.length > 0" :friends="requests" label="Friend requests" />
-        <FriendCard :friends="friends" label="Friends" />
+        <FriendCard v-if="requests.length > 0" requested :friends="requests" label="Friend requests" />
+        <FriendCard v-if="friends.length > 0" :friends="friends" label="Friends" />
+        <h3 v-else>No friends yet 😞</h3>
         <FriendCard :friends="others" label="Others" />
       </div>
       <div v-else>
@@ -84,6 +86,18 @@ const others = computed(() => {
 }
 section.default {
   padding: 0;
+}
+
+.action {
+  position: absolute;
+  width: max-content;
+  flex-wrap: wrap;
+  right: 0.5rem;
+  top: 0.5rem;
+}
+
+h3 {
+  text-align: center;
 }
 
 .q-intersection {

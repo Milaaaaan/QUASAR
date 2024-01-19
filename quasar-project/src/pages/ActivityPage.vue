@@ -26,7 +26,7 @@ const activity = computed(() => {
       isTransaction: true,
     }))
   )
-  array.sort((a, b) =>  new Date(b.date) - new Date(a.date))
+  array.sort((a, b) => new Date(b.date) - new Date(a.date))
   return array
 })
 
@@ -34,14 +34,14 @@ onMounted(() => {
   if (useUser.friends == null) useUser.sync()
   if (useReceipt.receipts == null) useReceipt.sync()
 })
-
-
 </script>
 
 <template>
   <q-page>
     <section class="default">
       <h2>Recent Activity</h2>
+      <h3 v-if="activity.length == 0 && !loading">No activity yet</h3>
+      <q-btn color="primary" icon="add" label="Make new receipt" to="/create/bill" />
       <ReceiptTimeline :loading="loading" :receipts="activity" />
     </section>
   </q-page>

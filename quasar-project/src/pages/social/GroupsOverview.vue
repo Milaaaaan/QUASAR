@@ -9,6 +9,16 @@ const loading = computed(() => (useGroup.groups ? false : true))
 onMounted(() => {
   if (useGroup.groups == null) useGroup.sync()
 })
+
+const joined = computed(() => {
+  if (useGroup.groups) return useGroup.groups.filter((x) => x.joined)
+  else return null
+})
+
+const requests = computed(() => {
+  if (useGroup.groups) return useGroup.groups.filter((x) => !x.joined)
+  else return null
+})
 </script>
 
 <template>
@@ -18,9 +28,15 @@ onMounted(() => {
         <q-btn :to="{ name: 'Create group' }" class="float" icon="add" label="Make group" color="primary" />
       </div>
 
-      <q-list v-if="useGroup.groups && $route.name == 'Groups'">
+      <q-list v-if="joined && $route.name == 'Groups'">
         <q-item-label header>Joined groups</q-item-label>
-        <group-card v-for="group in useGroup.groups" :key="group.id" :group="group" />
+        <group-card v-for="group in joined" :key="group.id" :group="group" />
+        <h3 v-if="joined.length < 1">No groups joined yet 😞</h3>
+      </q-list>
+
+      <q-list v-if="requests.length > 0 && $route.name == 'Groups'">
+        <q-item-label header>Group requests</q-item-label>
+        <group-card v-for="group in requests" request :key="group.id" :group="group" />
       </q-list>
 
       <RouterView v-else></RouterView>
@@ -51,5 +67,9 @@ onMounted(() => {
   display: flex;
   flex-direction: row-reverse;
   padding: 1rem;
+}
+
+h3 {
+  margin: 1rem;
 }
 </style>

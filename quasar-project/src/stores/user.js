@@ -11,7 +11,7 @@ export const useUserStore = defineStore('userStore', () => {
   const user = ref(null)
   const useFetch = useFetchStore()
   const useConnection = useConnectionStore()
-  const notifications = ref([])
+  const notifications = ref(null)
   const friends = ref(null)
   const requests = ref([])
   const listener = ref(null)
@@ -173,7 +173,7 @@ export const useUserStore = defineStore('userStore', () => {
     token.value = null
     friends.value = null
     requests.value = []
-    notifications.value = []
+    notifications.value = null
     localStorage.clear()
   }
 

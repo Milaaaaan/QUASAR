@@ -6,10 +6,14 @@ import { useRoute } from 'vue-router'
 import FriendCard from '../molecules/FriendCard.vue'
 import { useUserStore } from 'src/stores/user'
 import ReceiptTimeline from 'src/components/molecules/ReceiptTimeline.vue'
+import { usePopUpStore } from 'src/stores/popup'
+import { useRouter } from 'vue-router'
 
 const useGroup = useGroupStore()
 const useReceipt = useReceiptStore()
 const useUser = useUserStore()
+const usePopUp = usePopUpStore()
+const router = useRouter()
 const route = useRoute()
 const details = ref()
 const tab = ref('Acitivty')
@@ -18,6 +22,9 @@ onMounted(async () => {
   await useGroup.get()
   await useReceipt.get()
   details.value = useGroup.groups.filter((x) => x.id == route.params.id)[0]
+
+  if (!details.value.joined) router.push('/social/groups')
+
   details.value.members = useUser.friends.filter((x) => {
     if (x.groups && x.groups.length > 0) {
       return x.groups.some((y) => y.group_id == route.params.id)
@@ -26,15 +33,23 @@ onMounted(async () => {
   })
   details.value.receipts = useReceipt.receipts.filter((x) => x.group_id == details.value.id)
 })
+
+const openPopUP = (details) => {
+  usePopUp.type = 'members'
+  usePopUp.details = details
+  usePopUp.open = true
+}
 </script>
 
 <template>
   <section v-if="details">
-    <h2>{{ details.name }}</h2>
-    <i>{{ details.description }}</i>
+    <div class="pd">
+      <h2>{{ details.name }}</h2>
+      <i>{{ details.description }}</i>
+    </div>
 
     <div class="buttons">
-      <q-btn color="primary" to="/create/bill">
+      <q-btn color="primary" @click="openPopUP(details)">
         + <q-icon color="light" size="small" aria-hidden="true" name="person" />
       </q-btn>
       <q-btn color="primary" to="/create/bill">
@@ -55,7 +70,7 @@ onMounted(async () => {
       </q-tab-panel>
 
       <q-tab-panel name="Members" class="no-pad">
-        <friend-card :friends="details.members" />
+        <friend-card label="Joined members" :friends="details.members" />
       </q-tab-panel>
     </q-tab-panels>
   </section>
@@ -63,7 +78,6 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 section {
-  padding: 1rem;
   background-color: $card;
 }
 
@@ -73,11 +87,16 @@ section {
   }
 }
 
+.pd {
+  padding: 1rem;
+}
+
 .q-panel {
   will-change: scroll-position;
 }
 
 .q-tab-panels {
+  padding: 1rem;
   background: $background;
 }
 
@@ -86,6 +105,7 @@ section {
 }
 
 .buttons {
+  padding: 1rem;
   display: flex;
   flex-direction: row-reverse;
   gap: 1rem;

@@ -18,6 +18,11 @@ const props = defineProps({
     required: true,
     type: String,
   },
+  requested: {
+    required: false,
+    type: Boolean,
+    default: false,
+  },
 })
 
 const owed = (friend) => {
@@ -58,7 +63,7 @@ const declineFriend = async (x) => {
 
 <template>
   <q-list>
-    <q-item-label header>{{ label }}</q-item-label>
+    <q-item-label header>{{ label }} ({{ friends.length }})</q-item-label>
     <q-intersection transition="scale" v-for="(friend, index) in friends" :key="index">
       <q-item clickable v-ripple @click="openPopUP(friend)">
         <q-item-section avatar>
@@ -67,11 +72,7 @@ const declineFriend = async (x) => {
 
         <q-item-section>
           <q-item-label lines="1">{{ friend.name }}</q-item-label>
-          <q-item-label
-            v-if="friend.requested && !friend.friend && friend.user1_id != useUser.user.id"
-            lines="2"
-            class="flex"
-          >
+          <q-item-label v-if="requested" lines="2" class="flex">
             <q-btn
               size="xx-small"
               color="negative"

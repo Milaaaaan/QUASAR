@@ -30,7 +30,7 @@ const isRouteActive = (routePattern) => {
 </script>
 
 <template>
-  <nav v-if="!isOpen && $route.name != 'Login' && $route.name != 'Register'">
+  <nav v-if="!isOpen && useUser.user">
     <RouterLink to="/" :class="{ active: $route.path == '/' }" router-direction="forward">
       <q-icon size="1.5rem" name="home" />
       <p class="nav-text">Home</p>

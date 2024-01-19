@@ -15,6 +15,7 @@ const useUser = useUserStore()
 const $q = useQuasar()
 const amount = ref(0)
 const title = ref('')
+const member = ref(null)
 
 watch(usePopUp, () => {
   if (usePopUp.open) {
@@ -79,6 +80,37 @@ const validate = () => {
   if (amount.value > Math.abs(details.value.user1_debt)) amount.value = Math.abs(details.value.user1_debt)
   else if (amount.value < 0) amount.value = 0.01
 }
+
+const unJoinedMembers = computed(() => {
+  if (!useUser.friends) return null
+  return useUser.friends
+    .filter((x) => {
+      if (x.groups && x.groups.length > 0) {
+        return !x.groups.some((y) => y.group_id == details.value.id)
+      }
+      return true
+    })
+    .map((x) => ({ label: x.name, value: x }))
+})
+
+const addMember = async () => {
+  await useFetch.fetch(
+    `/groups/${details.value.id}/members/add`,
+    'post',
+    { id: member.value.value.id },
+    true,
+    true,
+    false
+  )
+  const index = useUser.friends.findIndex((x) => x.id === member.value.value.id)
+  console.log(useUser.friends[index])
+  if (index !== -1) {
+    useUser.friends[index].groups.push({ group_id: details.value.id, joined: 0, ower: 0 })
+    useUser.friends[index].synced = false
+  }
+  useUser.update()
+  usePopUp.open = false
+}
 </script>
 
 <template>
@@ -88,8 +120,9 @@ const validate = () => {
       <qrcode-vue
         :foreground="$q.dark.isActive ? '#FFFF' : '#000'"
         background="transparent"
-        :value="details.qr"
+        :value="`https://bill-buddy.milandegraeve.ikdoeict.be/social/friends/add?code=${details.qr}`"
         level="H"
+        size="150"
       />
     </q-card-section>
 
@@ -107,9 +140,9 @@ const validate = () => {
       </q-list>
 
       <div class="buttons">
-        <q-btn v-if="!details.friend || !details.requested" @click="addfriend" color="positive" icon="person"
-          >Add as friend</q-btn
-        >
+        <q-btn v-if="!details.friend || !details.requested" @click="addfriend" color="positive" icon="person">
+          Add as friend
+        </q-btn>
         <q-btn v-if="details.friend" color="negative" icon="person" @click="removeFriend">Remove friend</q-btn>
         <q-btn v-if="details.user1_debt < 0" color="primary" icon="attach_money" @click="openPay">Repay dept</q-btn>
       </div>
@@ -150,6 +183,24 @@ const validate = () => {
       </div>
     </q-card-section>
 
+    <q-card-section v-else-if="usePopUp.type == 'members'" class="pop-up">
+      <ProfilePicture :pic="details.profile_picture" />
+      <h3>Add members to {{ details.name }}</h3>
+      <q-select
+        v-if="unJoinedMembers.length >= 1"
+        v-model="member"
+        :options="unJoinedMembers"
+        label="Standard"
+        filled
+      />
+      <h4 v-else>Everyone you know is already in the group.</h4>
+
+      <div class="buttons">
+        <q-btn @click="usePopUp.open = false" color="negative">Cancel</q-btn>
+        <q-btn v-if="unJoinedMembers.length >= 1" @click="addMember" color="positive">Add member</q-btn>
+      </div>
+    </q-card-section>
+
     <q-card-section v-else class="pop-up">
       {{ details }}
     </q-card-section>
@@ -167,6 +218,10 @@ const validate = () => {
     margin: 0.5rem 0;
     color: var(--ion-text-color);
   }
+}
+
+h4 {
+  margin: 1rem 0;
 }
 
 .q-slider {

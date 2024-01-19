@@ -60,8 +60,6 @@ const submit = async () => {
         </template>
       </q-input>
 
-      {{ image  }}
-
       <q-file filled bottom-slots v-model="image" label counter>
         <template v-slot:prepend>
           <q-icon name="image" @click.stop.prevent />

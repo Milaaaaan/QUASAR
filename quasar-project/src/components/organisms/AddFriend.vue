@@ -17,8 +17,6 @@ const useUser = useUserStore()
 const isSupported = ref(false)
 const codeError = computed(() => validator.name(submitted.value, code.value, 'Friendcode', 7))
 
-//Check if url has code=8746548
-
 const checkSupport = async () => {
   const result = await BarcodeScanner.isSupported()
   isSupported.value = result.supported
@@ -31,7 +29,12 @@ const scan = async () => {
       return
     }
     const { barcodes: scannedBarcodes } = await BarcodeScanner.scan()
-    code.value = scannedBarcodes[0].rawValue
+    console.log(scannedBarcodes[0].rawValue)
+
+    const url = new URL(scannedBarcodes[0].rawValue)
+    const searchParams = new URLSearchParams(url.search)
+    code.value = searchParams.get('code')
+
     submit()
   }
 }
@@ -93,7 +96,7 @@ if (route.query.code) {
       <FormSplitter v-if="isSupported" text="OR" />
 
       <q-btn size="large" v-if="isSupported" @click="scan" class="upload">
-        <q-icon name="camer_alt" />
+        <q-icon class="pd" name="photo_camera" />
         Scan QR code
       </q-btn>
     </form>
@@ -112,6 +115,10 @@ ion-content {
   padding: 0.5rem;
   border-radius: 5px;
   border: 2px dotted $primary;
+}
+
+.pd {
+  margin-right: 1rem;
 }
 
 button {
