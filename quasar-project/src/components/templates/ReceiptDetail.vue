@@ -71,7 +71,7 @@ onMounted(() => {
       <h3 class="pd">Contributors</h3>
       <q-list>
         <div v-for="(contributor, index) in contributors" :key="index">
-          <q-item clickable v-ripple @click="openPopUP(friend)">
+          <q-item clickable v-ripple>
             <q-item-section avatar>
               <profile-picture size="x-small" :pic="contributor.profile_picture" />
             </q-item-section>

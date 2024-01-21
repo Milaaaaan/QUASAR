@@ -43,16 +43,18 @@ const openPopUP = (details) => {
 
 <template>
   <section v-if="details">
-    <div class="pd">
-      <h2>{{ details.name }}</h2>
-      <i>{{ details.description }}</i>
+    <div class="col-6">
+      <q-img :src="details.img">
+        <div class="absolute-bottom text-subtitle1 text-center">{{ details.name }}</div>
+      </q-img>
+      <i class="pd">{{ details.description }}</i>
     </div>
 
     <div class="buttons">
-      <q-btn color="primary" @click="openPopUP(details)">
+      <q-btn rounded color="primary" @click="openPopUP(details)">
         + <q-icon color="light" size="small" aria-hidden="true" name="person" />
       </q-btn>
-      <q-btn color="primary" to="/create/bill">
+      <q-btn rounded color="primary" to="/create/bill">
         + <q-icon color="light" size="small" aria-hidden="true" name="receipt" />
       </q-btn>
     </div>
@@ -66,11 +68,13 @@ const openPopUP = (details) => {
 
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="Acitivty" class="no-pad">
-        <ReceiptTimeline :receipts="details.receipts" />
+        <ReceiptTimeline v-if="details.receipts.length > 0" :receipts="details.receipts" />
+        <h3 v-else>No receipts yet</h3>
       </q-tab-panel>
 
       <q-tab-panel name="Members" class="no-pad">
-        <friend-card label="Joined members" :friends="details.members" />
+        <friend-card v-if="details.members.length > 0" label="Joined members" :friends="details.members" />
+        <h3 v-else>No members yet</h3>
       </q-tab-panel>
     </q-tab-panels>
   </section>
@@ -79,6 +83,10 @@ const openPopUP = (details) => {
 <style scoped lang="scss">
 section {
   background-color: $card;
+}
+
+img {
+  width: 100%;
 }
 
 .body--dark {

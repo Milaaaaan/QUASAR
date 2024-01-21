@@ -18,7 +18,7 @@
       <li class="card">
         <RouterLink to="/create/bill" class="you">
           <q-icon size="xxx-large" color="light" name="receipt" />
-          <h2>Make a bill</h2>
+          <h2>Make a Receipt</h2>
         </RouterLink>
       </li>
     </ul>

@@ -14,23 +14,18 @@ const passRepeat = ref('')
 const img = ref(null)
 const step = ref(1)
 const submitted = ref(false)
-
+const loading = ref(false)
 const nameError = computed(() => validator.name(submitted.value, name.value, 'Name', 5))
-
 const emailError = computed(() => validator.email(submitted.value, email.value))
-
 const passError = computed(() => {
   if (step.value == 2) return validator.password(submitted.value, pass.value, passRepeat.value)
   else return ''
 })
 
-const useFetch = useFetchStore()
-
 const register = async () => {
   submitted.value = true
-  if (!passError.value) {
-    //TODO: LOADING ANIM
-    //loading.value = true
+  if (!passError.value && !emailError.value && !nameError.value) {
+    loading.value = true
     try {
       await useUser.register({
         name: name.value,
@@ -38,31 +33,8 @@ const register = async () => {
         password: pass.value,
       })
       router.push('/login')
-    } catch (err) {
-      // skip
-    }
-    //loading.value = false
-  } else {
-    //form.value.tabindex = 1
-    //form.value.focus()
-  }
-}
-
-const validateStepOne = async () => {
-  submitted.value = true
-  if (!nameError.value && !emailError.value) {
-    //TODO: LOADING ANIM
-    //loading.value = true
-    try {
-      // await userStore.login({ email: email.value, password: pwd.value })
-    } catch (err) {
-      // skip
-    }
-    submitted.value = false
-    step.value++
-  } else {
-    //form.value.tabindex = 1
-    //form.value.focus()
+    } catch (err) {}
+    loading.value = false
   }
 }
 </script>
@@ -109,10 +81,7 @@ const validateStepOne = async () => {
         :error="submitted && passError != ''"
       />
 
-      <q-btn size="large" color="primary" @click="register">
-        <q-spinner-tail v-if="loading" color="white" />
-        <p v-else>Sign up</p>
-      </q-btn>
+      <q-btn :loading="loading" size="large" color="primary" @click="register"> Sign up </q-btn>
 
       <FormSplitter text="Already have an account?" />
 

@@ -40,7 +40,7 @@ const accept = async (group) => {
     <q-item v-ripple clickable>
       <q-item-section avatar>
         <q-avatar square>
-          <img :src="group.img ? group.img : img" />
+          <q-img :src="group.img ? group.img : img" :ratio="1 / 1" spinner-color="primary" spinner-size="82px" />
         </q-avatar>
       </q-item-section>
       <q-item-section>

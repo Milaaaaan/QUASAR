@@ -32,7 +32,7 @@ const tryLogin = async () => {
         password: pass.value,
       })
 
-      router.push('/account')
+      router.push('/')
     } catch (err) {}
     loading.value = false
   }
